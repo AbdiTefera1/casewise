@@ -12,3 +12,178 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Case {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String
+  status      CaseStatus
+  priority    CasePriority
+  clientId    Int
+  lawyerId    Int
+  deadline    DateTime
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  client      Client        @relation(fields: [clientId], references: [id])
+  lawyer      Lawyer        @relation(fields: [lawyerId], references: [id])
+  tasks       Task[]
+  appointment Appointment[]
+  document    Document[]
+  invoice     Invoice[]
+}
+
+enum CaseStatus {
+  OPEN
+  CLOSED
+  PENDING
+  ARCHIVED
+}
+
+enum CasePriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Client {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  email     String   @unique
+  phone     String?
+  address   String?
+  createAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cases       Case[]
+  appointment Appointment[]
+}
+
+model Lawyer {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  email     String   @unique
+  phone     String?
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  appointments Appointment[]
+  cases        Case[]
+  tasks        Task[]
+  document     Document[]
+}
+
+model Task {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String
+  priority    TaskPriority
+  status      TaskStatus
+  dueDate     DateTime
+  caseId      Int
+  lawyerId    Int
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  case   Case   @relation(fields: [caseId], references: [id])
+  lawyer Lawyer @relation(fields: [lawyerId], references: [id])
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  PENDING
+}
+
+model Appointment {
+  id        Int      @id @default(autoincrement())
+  title     String
+  date      DateTime
+  location  String
+  clientId  Int
+  caseId    Int
+  lawyerId  Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  case   Case    @relation(fields: [caseId], references: [id])
+  client Client  @relation(fields: [clientId], references: [id])
+  Lawyer Lawyer? @relation(fields: [lawyerId], references: [id])
+}
+
+model Document {
+  id         Int      @id @default(autoincrement())
+  name       String
+  fileUrl    String
+  caseId     Int
+  uploadedBy Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  case     Case   @relation(fields: [caseId], references: [id])
+  uploader Lawyer @relation(fields: [uploadedBy], references: [id])
+}
+
+model Invoice {
+  id        Int           @id @default(autoincrement())
+  caseId    Int
+  amount    Float
+  status    InvoiceStatus
+  dueDate   DateTime
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  case    Case      @relation(fields: [caseId], references: [id])
+  payment Payment[]
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+model Payment {
+  id          Int           @id @default(autoincrement())
+  invoiceId   Int
+  amount      Float
+  method      PaymentMethod
+  status      PaymentStatus
+  paymentDate DateTime      @default(now())
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  BANK_TRANSFER
+  PAYPAL
+  CASH
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model PricingPlan {
+  id        Int      @id @default(autoincrement())
+  name      String
+  price     Float
+  features  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
