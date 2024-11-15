@@ -1,0 +1,179 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// app/api/appointments/route.ts
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { auth } from '@/lib/auth';
+import { validateAppointmentData } from '@/lib/validators';
+import { AppointmentStatus, Prisma } from '@prisma/client';
+
+export async function POST(request: Request) {
+  try {
+    const session = await auth(request);
+    
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const data = await request.json();
+    
+    const validationResult = validateAppointmentData(data);
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: validationResult.error },
+        { status: 400 }
+      );
+    }
+
+    // Check for time slot availability
+    const existingAppointment = await prisma.appointment.findFirst({
+      where: {
+        lawyerId: data.lawyerId,
+        startTime: {
+          lte: new Date(data.endTime)
+        },
+        endTime: {
+          gte: new Date(data.startTime)
+        },
+        status: {
+          not: 'CANCELLED'
+        }
+      }
+    });
+
+    if (existingAppointment) {
+      return NextResponse.json(
+        { error: 'Time slot is not available' },
+        { status: 409 }
+      );
+    }
+
+    const appointment = await prisma.appointment.create({
+      data: {
+        ...data,
+        startTime: new Date(data.startTime),
+        endTime: new Date(data.endTime),
+        createdById: session.user.id
+      },
+      include: {
+        lawyer: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        },
+        client: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        },
+        case: {
+          select: {
+            id: true,
+            title: true,
+            caseNumber: true
+          }
+        }
+      }
+    });
+
+    return NextResponse.json({ appointment }, { status: 201 });
+    
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request: Request) {
+  try {
+    const session = await auth(request);
+    
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const status = searchParams.get('status');
+    const date = searchParams.get('date');
+    const search = searchParams.get('search') || '';
+
+    const skip = (page - 1) * limit;
+
+    const where: Prisma.AppointmentWhereInput = {
+      OR: search ? [
+        { title: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+        { lawyer: { name: { contains: search, mode: 'insensitive' } } },
+        { client: { name: { contains: search, mode: 'insensitive' } } }
+      ] : undefined,
+      status: status as AppointmentStatus || undefined,
+      startTime: date ? {
+        gte: new Date(date),
+        lt: new Date(new Date(date).setDate(new Date(date).getDate() + 1))
+      } : undefined,
+      organizationId: session.user.organizationId
+    };
+
+    const [appointments, total] = await Promise.all([
+      prisma.appointment.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { startTime: 'asc' },
+        include: {
+          lawyer: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          },
+          client: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          },
+          case: {
+            select: {
+              id: true,
+              title: true,
+              caseNumber: true
+            }
+          }
+        }
+      }),
+      prisma.appointment.count({ where })
+    ]);
+
+    return NextResponse.json({
+      appointments,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
+    
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

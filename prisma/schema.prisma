@@ -26,16 +26,40 @@ enum CaseStatus {
   ARCHIVED
 }
 
+enum ClientStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum CompanyType {
+  INDIVIDUAL
+  COMPANY
+}
+
 enum TaskPriority {
   HIGH
   MEDIUM
   LOW
+  URGENT
 }
 
 enum TaskStatus {
   NOT_STARTED
   IN_PROGRESS
   COMPLETED
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  RESCHEDULED
+}
+
+enum AppointmentType {
+  IN_PERSON
+  VIRTUAL
 }
 
 enum InvoiceStatus {
@@ -59,20 +83,21 @@ enum PaymentStatus {
 
 // Models
 model Organization {
-  id          String    @id @default(uuid())
+  id          String        @id @default(uuid())
   name        String
   contactInfo Json
-  domain      String    @unique
+  domain      String        @unique
   settings    Json?
   createdById String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   deletedAt   DateTime?
-  createdBy   User      @relation("CreatedOrganizations", fields: [createdById], references: [id])
+  createdBy   User          @relation("CreatedOrganizations", fields: [createdById], references: [id])
   // Relations
   users       User[]
   cases       Case[]
   clients     Client[]
+  Appointment Appointment[]
 }
 
 model User {
@@ -93,6 +118,7 @@ model User {
   appointments         Appointment[]
   notifications        Notification[]
   createdOrganizations Organization[] @relation("CreatedOrganizations")
+  lawyer               Lawyer?
 
   @@index([organizationId])
 }
@@ -114,7 +140,7 @@ model Case {
 
   // Relations
   organization Organization  @relation(fields: [organizationId], references: [id])
-  client       Client?        @relation(fields: [clientId], references: [id])
+  client       Client?       @relation(fields: [clientId], references: [id])
   lawyer       User          @relation("LawyerCases", fields: [lawyerId], references: [id])
   tasks        Task[]
   appointments Appointment[]
@@ -127,12 +153,22 @@ model Case {
 }
 
 model Client {
-  id             String   @id @default(uuid())
-  organizationId String?
-  name           String?
+  id             String        @id @default(uuid())
+  organizationId String
+  name           String
+  email          String?
+  type           CompanyType?
   contactInfo    Json?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  clientNumber   String
+  companyName    String?
+  industry       String?
+  website        String?
+  notes          String?
+  customFields   String?
+  status         ClientStatus?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
 
   // Relations
   organization Organization? @relation(fields: [organizationId], references: [id])
@@ -141,6 +177,24 @@ model Client {
   invoices     Invoice[]
 
   @@index([organizationId])
+}
+
+model Lawyer {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  specializations String[]
+  barNumber       String
+  licenseStatus   String
+  jurisdictions   String[]
+  hourlyRate      Float
+  contactInfo     Json
+  availability    Json
+  status          String   @default("ACTIVE")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([barNumber])
 }
 
 model Task {
@@ -164,20 +218,27 @@ model Task {
 }
 
 model Appointment {
-  id              String   @id @default(uuid())
+  id              String             @id @default(uuid())
   caseId          String
   clientId        String
   lawyerId        String
+  title           String
+  description     String
+  organizationId  String?
   appointmentDate DateTime
+  startTime       DateTime?
+  endTime         DateTime?
   location        String
-  notes           String   @db.Text
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  type            AppointmentType?
+  status          AppointmentStatus?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
 
   // Relations
-  case   Case   @relation(fields: [caseId], references: [id])
-  client Client @relation(fields: [clientId], references: [id])
-  lawyer User   @relation(fields: [lawyerId], references: [id])
+  organization Organization? @relation(fields: [organizationId], references: [id])
+  case         Case         @relation(fields: [caseId], references: [id])
+  client       Client       @relation(fields: [clientId], references: [id])
+  lawyer       User         @relation(fields: [lawyerId], references: [id])
 
   @@index([caseId])
   @@index([clientId])

@@ -2,6 +2,7 @@
 // lib/auth.ts
 import * as jwt from 'jsonwebtoken';
 import { prisma } from './prisma';
+import * as bcrypt from 'bcryptjs';
 
 export async function auth(request: Request) {
   try {
@@ -33,4 +34,8 @@ export async function auth(request: Request) {
   } catch (error) {
     return null;
   }
+}
+
+export async function hashPassword(password: string){
+ return await bcrypt.hash(password, 10);
 }

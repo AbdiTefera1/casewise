@@ -105,7 +105,7 @@ export async function PATCH(
           data: {
             ...updateData,
             status,
-            assignedToId,
+            lawyerId: assignedToId,
             updatedAt: new Date()
           },
           include: {
