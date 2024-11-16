@@ -144,3 +144,39 @@ const contactInfoSchema = z.object({
     };
   }
   
+
+
+  // document validation 
+
+const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
+const ACCEPTED_FILE_TYPES = [
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'image/jpeg',
+  'image/png',
+  'image/jpg'
+];
+
+const documentSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  caseId: z.string().uuid('Invalid case ID'),
+  description: z.string().optional(),
+  category: z.enum(['PLEADING', 'EVIDENCE', 'CORRESPONDENCE', 'CONTRACT', 'OTHER']),
+  file: z.custom<File>()
+    .refine((file) => file !== null, 'File is required')
+    .refine((file) => file.size <= MAX_FILE_SIZE, 'File size must be less than 100MB')
+    .refine(
+      (file) => ACCEPTED_FILE_TYPES.includes(file.type),
+      'Invalid file type. Accepted types: PDF, DOC, DOCX, JPG, PNG'
+    )
+});
+
+export function validateDocumentData(data: any) {
+  const result = documentSchema.safeParse(data);
+  
+  return {
+    success: result.success,
+    error: result.success ? null : result.error.errors[0].message
+  };
+}

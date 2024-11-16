@@ -62,6 +62,14 @@ enum AppointmentType {
   VIRTUAL
 }
 
+enum DocumentCategory {
+  PLEADING
+  EVIDENCE
+  CORRESPONDENCE
+  CONTRACT
+  OTHER
+}
+
 enum InvoiceStatus {
   PAID
   UNPAID
@@ -98,6 +106,7 @@ model Organization {
   cases       Case[]
   clients     Client[]
   Appointment Appointment[]
+  Document    Document[]
 }
 
 model User {
@@ -119,6 +128,7 @@ model User {
   notifications        Notification[]
   createdOrganizations Organization[] @relation("CreatedOrganizations")
   lawyer               Lawyer?
+  Document             Document[]
 
   @@index([organizationId])
 }
@@ -236,27 +246,46 @@ model Appointment {
 
   // Relations
   organization Organization? @relation(fields: [organizationId], references: [id])
-  case         Case         @relation(fields: [caseId], references: [id])
-  client       Client       @relation(fields: [clientId], references: [id])
-  lawyer       User         @relation(fields: [lawyerId], references: [id])
+  case         Case          @relation(fields: [caseId], references: [id])
+  client       Client        @relation(fields: [clientId], references: [id])
+  lawyer       User          @relation(fields: [lawyerId], references: [id])
 
   @@index([caseId])
   @@index([clientId])
   @@index([lawyerId])
 }
 
+
+
 model Document {
-  id         String   @id @default(uuid())
-  caseId     String
-  fileName   String
-  fileUrl    String
-  fileType   String
-  uploadedAt DateTime @default(now())
+  id          String           @id @default(uuid())
+  title       String
+  description String?
+  category    DocumentCategory
+  fileName    String 
+  fileSize    Int 
+  fileType    String
+  storagePath String 
+  storageUrl  String 
 
-  // Relations
-  case Case @relation(fields: [caseId], references: [id])
+  // Relationships
+  case           Case         @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  caseId         String
+  uploadedBy     User         @relation(fields: [uploadedById], references: [id])
+  uploadedById   String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
 
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Indexes
   @@index([caseId])
+  @@index([organizationId])
+  @@index([uploadedById])
+  @@index([category])
+  @@index([createdAt])
 }
 
 model Invoice {
