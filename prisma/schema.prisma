@@ -71,9 +71,11 @@ enum DocumentCategory {
 }
 
 enum InvoiceStatus {
-  PAID
+  DRAFT
   UNPAID
-  OVERDUE
+  PAID
+  VOID
+  CANCELLED
 }
 
 enum PaymentMethod {
@@ -81,12 +83,29 @@ enum PaymentMethod {
   BANK_TRANSFER
   CASH
   CHECK
+  OTHER
 }
 
 enum PaymentStatus {
   COMPLETED
   PENDING
   FAILED
+}
+
+enum NotificationType {
+  INVOICE_CREATED
+  INVOICE_PAID
+  PAYMENT_RECEIVED
+  INVOICE_OVERDUE
+  SYSTEM_ALERT
+  CLIENT_MESSAGE
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
 }
 
 // Models
@@ -107,6 +126,7 @@ model Organization {
   clients     Client[]
   Appointment Appointment[]
   Document    Document[]
+  Invoice     Invoice[]
 }
 
 model User {
@@ -129,6 +149,7 @@ model User {
   createdOrganizations Organization[] @relation("CreatedOrganizations")
   lawyer               Lawyer?
   Document             Document[]
+  Invoice              Invoice[]
 
   @@index([organizationId])
 }
@@ -255,18 +276,16 @@ model Appointment {
   @@index([lawyerId])
 }
 
-
-
 model Document {
   id          String           @id @default(uuid())
   title       String
   description String?
   category    DocumentCategory
-  fileName    String 
-  fileSize    Int 
+  fileName    String
+  fileSize    Int
   fileType    String
-  storagePath String 
-  storageUrl  String 
+  storagePath String
+  storageUrl  String
 
   // Relationships
   case           Case         @relation(fields: [caseId], references: [id], onDelete: Cascade)
@@ -289,47 +308,93 @@ model Document {
 }
 
 model Invoice {
-  id        String        @id @default(uuid())
-  clientId  String
-  caseId    String
-  amountDue Decimal       @db.Decimal(10, 2)
-  dueDate   DateTime
-  status    InvoiceStatus
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id             String        @id @default(uuid())
+  invoiceNumber  String        @unique
+  clientId       String
+  caseId         String?
+  dueDate        DateTime
+  notes          String?       @db.Text
+  terms          String?       @db.Text
+  status         InvoiceStatus @default(UNPAID)
+  subtotal       Float
+  tax            Float
+  total          Float
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  organizationId String
+  createdById    String
 
-  // Relations
-  client   Client    @relation(fields: [clientId], references: [id])
-  case     Case      @relation(fields: [caseId], references: [id])
-  payments Payment[]
+  // Relationships
+  items        InvoiceItem[]
+  payments     Payment[]
+  client       Client        @relation(fields: [clientId], references: [id])
+  case         Case?         @relation(fields: [caseId], references: [id])
+  organization Organization  @relation(fields: [organizationId], references: [id])
+  createdBy    User          @relation(fields: [createdById], references: [id])
 
   @@index([clientId])
   @@index([caseId])
+  @@index([organizationId])
+  @@index([status])
+  @@index([createdAt])
 }
 
-model Payment {
-  id            String        @id @default(uuid())
-  invoiceId     String
-  amountPaid    Decimal       @db.Decimal(10, 2)
-  paymentDate   DateTime
-  paymentMethod PaymentMethod
-  status        PaymentStatus
+model InvoiceItem {
+  id          String   @id @default(uuid())
+  invoiceId   String
+  description String
+  quantity    Float
+  rate        Float
+  amount      Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  // Relations
-  invoice Invoice @relation(fields: [invoiceId], references: [id])
+  // Relationship
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 
   @@index([invoiceId])
 }
 
-model Notification {
-  id        String   @id @default(uuid())
-  userId    String
-  message   String
-  isRead    Boolean  @default(false)
-  createdAt DateTime @default(now())
+model Payment {
+  id          String        @id @default(uuid())
+  invoiceId   String
+  amount      Float
+  paymentDate DateTime
+  method      PaymentMethod
+  reference   String?
+  notes       String?       @db.Text
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
-  // Relations
-  user User @relation(fields: [userId], references: [id])
+  // Relationship
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+
+  @@index([invoiceId])
+  @@index([paymentDate])
+}
+
+// prisma/schema.prisma
+
+
+
+model Notification {
+  id          String              @id @default(uuid())
+  userId      String
+  type        NotificationType
+  title       String
+  message     String
+  reference   String?             // e.g., "invoice", "payment"
+  referenceId String?             // ID of the referenced entity
+  priority    NotificationPriority @default(NORMAL)
+  read        Boolean             @default(false)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  // Relationship
+  user        User                @relation(fields: [userId], references: [id])
 
   @@index([userId])
+  @@index([createdAt])
+  @@index([type])
+  @@index([read])
 }

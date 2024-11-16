@@ -180,3 +180,71 @@ export function validateDocumentData(data: any) {
     error: result.success ? null : result.error.errors[0].message
   };
 }
+
+// invoice
+const invoiceItemSchema = z.object({
+  description: z.string().min(1, 'Description is required'),
+  quantity: z.number().positive('Quantity must be positive'),
+  rate: z.number().nonnegative('Rate must be non-negative'),
+});
+
+const invoiceSchema = z.object({
+  clientId: z.string().uuid('Invalid client ID'),
+  caseId: z.string().uuid('Invalid case ID'),
+  dueDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
+    message: 'Invalid due date format'
+  }),
+  notes: z.string().optional(),
+  terms: z.string().optional(),
+  items: z.array(invoiceItemSchema).min(1, 'At least one item is required'),
+});
+
+type InvoiceItem = z.infer<typeof invoiceItemSchema>;
+
+export function validateInvoiceData(data: any) {
+  try {
+    const validatedData = invoiceSchema.parse(data);
+    return {
+      success: true,
+      data: validatedData
+    };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: error.errors.map(err => ({
+          path: err.path.join('.'),
+          message: err.message
+        }))
+      };
+    }
+    return {
+      success: false,
+      error: 'Invalid invoice data'
+    };
+  }
+}
+
+interface InvoiceTotals {
+  subtotal: number;
+  tax: number;
+  total: number;
+}
+
+export function calculateInvoiceTotals(items: InvoiceItem[]): InvoiceTotals {
+  const subtotal = items.reduce((sum, item) => {
+    return sum + (item.quantity * item.rate);
+  }, 0);
+
+  // You can customize tax calculation based on your needs
+  // This example uses a fixed 10% tax rate
+  const TAX_RATE = 0.1;
+  const tax = subtotal * TAX_RATE;
+
+  return {
+    subtotal: Number(subtotal.toFixed(2)),
+    tax: Number(tax.toFixed(2)),
+    total: Number((subtotal + tax).toFixed(2))
+  };
+}
+
