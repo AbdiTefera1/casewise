@@ -248,3 +248,37 @@ export function calculateInvoiceTotals(items: InvoiceItem[]): InvoiceTotals {
   };
 }
 
+const paymentSchema = z.object({
+  invoiceId: z.string().uuid('Invalid invoice ID'),
+  amount: z.number().positive('Amount must be positive'),
+  paymentDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
+    message: 'Invalid payment date format'
+  }),
+  method: z.enum(['CASH', 'CHECK', 'CREDIT_CARD', 'BANK_TRANSFER', 'OTHER']),
+  reference: z.string().optional(),
+  notes: z.string().optional()
+});
+
+export function validatePaymentData(data: any) {
+  try {
+    const validatedData = paymentSchema.parse(data);
+    return {
+      success: true,
+      data: validatedData
+    };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: error.errors.map(err => ({
+          path: err.path.join('.'),
+          message: err.message
+        }))
+      };
+    }
+    return {
+      success: false,
+      error: 'Invalid payment data'
+    };
+  }
+}
