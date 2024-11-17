@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// lib/validators.ts
 import { z } from 'zod';
+import { prisma } from './prisma';
+import { NotificationType, NotificationPriority } from '@prisma/client';
 
 // Client Validator
 const clientSchema = z.object({
@@ -281,4 +282,112 @@ export function validatePaymentData(data: any) {
       error: 'Invalid payment data'
     };
   }
+}
+
+
+const notificationSchema = z.object({
+  userId: z.string().uuid('Invalid user ID'),
+  type: z.enum([
+    'INVOICE_CREATED',
+    'INVOICE_PAID',
+    'PAYMENT_RECEIVED',
+    'INVOICE_OVERDUE',
+    'SYSTEM_ALERT',
+    'CLIENT_MESSAGE'
+  ]),
+  title: z.string().min(1, 'Title is required'),
+  message: z.string().min(1, 'Message is required'),
+  reference: z.string().optional(),
+  referenceId: z.string().optional(),
+  priority: z.enum(['LOW', 'NORMAL', 'HIGH', 'URGENT']).optional()
+});
+
+export function validateNotificationData(data: any) {
+  try {
+    const validatedData = notificationSchema.parse(data);
+    return {
+      success: true,
+      data: validatedData
+    };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: error.errors.map(err => ({
+          path: err.path.join('.'),
+          message: err.message
+        }))
+      };
+    }
+    return {
+      success: false,
+      error: 'Invalid notification data'
+    };
+  }
+}
+
+interface CreateNotificationParams {
+  userId: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  reference?: string;
+  referenceId?: string;
+  priority?: NotificationPriority;
+}
+
+export async function createNotification({
+  userId,
+  type,
+  title,
+  message,
+  reference,
+  referenceId,
+  priority = 'NORMAL'
+}: CreateNotificationParams) {
+  return prisma.notification.create({
+    data: {
+      userId,
+      type,
+      title,
+      message,
+      reference,
+      referenceId,
+      priority
+    }
+  });
+}
+
+export async function createInvoiceNotification(
+  userId: string,
+  invoice: any,
+  type: 'INVOICE_CREATED' | 'INVOICE_PAID' | 'INVOICE_OVERDUE'
+) {
+  const titles = {
+    INVOICE_CREATED: 'New Invoice Created',
+    INVOICE_PAID: 'Invoice Paid',
+    INVOICE_OVERDUE: 'Invoice Overdue'
+  };
+
+  const messages = {
+    INVOICE_CREATED: `Invoice #${invoice.invoiceNumber} has been created for ${invoice.client.name}`,
+    INVOICE_PAID: `Invoice #${invoice.invoiceNumber} has been marked as paid`,
+    INVOICE_OVERDUE: `Invoice #${invoice.invoiceNumber} for ${invoice.client.name} is overdue`
+  };
+
+  const priorities = {
+    INVOICE_CREATED: 'NORMAL',
+    INVOICE_PAID: 'NORMAL',
+    INVOICE_OVERDUE: 'HIGH'
+  } as const;
+
+  return createNotification({
+    userId,
+    type,
+    title: titles[type],
+    message: messages[type],
+    reference: 'invoice',
+    referenceId: invoice.id,
+    priority: priorities[type]
+  });
 }
