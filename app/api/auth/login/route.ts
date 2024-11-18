@@ -42,7 +42,7 @@ export async function POST(request: Request) {
     // }});
 
     const response = NextResponse.json(
-        { message: 'Login successful' },
+        { message: 'Login successful', token: token },
         { status: 200 }
       );
       

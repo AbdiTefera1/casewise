@@ -127,6 +127,7 @@ model Organization {
   Appointment Appointment[]
   Document    Document[]
   Invoice     Invoice[]
+  ActivityLog ActivityLog[]
 }
 
 model User {
@@ -150,6 +151,7 @@ model User {
   lawyer               Lawyer?
   Document             Document[]
   Invoice              Invoice[]
+  ActivityLog          ActivityLog[]
 
   @@index([organizationId])
 }
@@ -375,26 +377,43 @@ model Payment {
 
 // prisma/schema.prisma
 
-
-
 model Notification {
-  id          String              @id @default(uuid())
+  id          String               @id @default(uuid())
   userId      String
   type        NotificationType
   title       String
   message     String
-  reference   String?             // e.g., "invoice", "payment"
-  referenceId String?             // ID of the referenced entity
+  reference   String? // e.g., "invoice", "payment"
+  referenceId String? // ID of the referenced entity
   priority    NotificationPriority @default(NORMAL)
-  read        Boolean             @default(false)
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
+  read        Boolean              @default(false)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
 
   // Relationship
-  user        User                @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([createdAt])
   @@index([type])
   @@index([read])
+}
+
+model ActivityLog {
+  id             String       @id @default(cuid())
+  userId         String?
+  organizationId String?
+  user           User?         @relation(fields: [userId], references: [id])
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  action         String // e.g., 'CREATE', 'UPDATE', 'DELETE'
+  entity         String // e.g., 'Case', 'Client', 'Document'
+  entityId       String
+  details        Json? 
+  ipAddress      String?
+  userAgent      String?
+  createdAt      DateTime     @default(now())
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
 }
