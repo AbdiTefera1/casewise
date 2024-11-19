@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Navbar from "@/components/Navbar";
 import ReactQueryProvider from '@/lib/ReactQueryProvider';
 import "./globals.css";
 
@@ -30,6 +31,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ReactQueryProvider>
+          <Navbar/>
           {children}
         </ReactQueryProvider>
       </body>

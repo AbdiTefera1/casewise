@@ -137,6 +137,7 @@ model User {
   email          String    @unique
   password       String
   role           UserRole
+  avator         String?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?
@@ -375,8 +376,6 @@ model Payment {
   @@index([paymentDate])
 }
 
-// prisma/schema.prisma
-
 model Notification {
   id          String               @id @default(uuid())
   userId      String
@@ -400,7 +399,7 @@ model Notification {
 }
 
 model ActivityLog {
-  id             String       @id @default(cuid())
+  id             String        @id @default(cuid())
   userId         String?
   organizationId String?
   user           User?         @relation(fields: [userId], references: [id])
@@ -408,10 +407,10 @@ model ActivityLog {
   action         String // e.g., 'CREATE', 'UPDATE', 'DELETE'
   entity         String // e.g., 'Case', 'Client', 'Document'
   entityId       String
-  details        Json? 
+  details        Json?
   ipAddress      String?
   userAgent      String?
-  createdAt      DateTime     @default(now())
+  createdAt      DateTime      @default(now())
 
   @@index([userId])
   @@index([entity, entityId])
