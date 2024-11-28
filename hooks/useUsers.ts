@@ -1,4 +1,6 @@
 // hooks/useUsers.ts
+"use client"
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { userApi, User } from '@/lib/api/users';
 

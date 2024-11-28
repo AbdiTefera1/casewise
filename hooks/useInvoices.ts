@@ -1,4 +1,6 @@
 // hooks/useInvoices.ts
+"use client"
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { invoiceApi, InvoiceCreateData, Payment } from '@/lib/api/invoices';
 

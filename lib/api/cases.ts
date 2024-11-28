@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // lib/api/cases.ts
 import api from '@/lib/api/config';
+import { CasePriority } from '@prisma/client';
 
 // Types
 export enum CaseStatus {
@@ -17,6 +19,7 @@ export interface Case {
   title: string;
   description: string;
   status: CaseStatus;
+  priority: CasePriority;
   caseNumber: string;
   startDate?: Date;
   endDate?: Date;
@@ -34,12 +37,6 @@ export interface Case {
     name: string;
     email: string;
   };
-}
-
-export interface CaseListResponse {
-  cases: Case[];
-  total: number;
-  pages: number;
 }
 
 interface CreateCaseData {
@@ -61,6 +58,18 @@ interface UpdateCaseData {
   endDate?: Date;
 }
 
+interface CaseListResponse {
+  cases: Case[]; // Replace `any` with your actual `Case` type.
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+};
+
+
+
 // API endpoints
 const CASES_ENDPOINT = '/cases';
 
@@ -69,18 +78,10 @@ export const casesApi = {
   create: (data: CreateCaseData) => 
     api.post<Case>(CASES_ENDPOINT, data),
 
-  getAll: (params?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    sortBy?: string;
-    sortOrder?: 'asc' | 'desc';
-    status?: CaseStatus;
-    startDate?: Date;
-    endDate?: Date;
-    lawyerId?: string;
-    clientId?: string;
-  }) => api.get<CaseListResponse>(CASES_ENDPOINT, { params }),
+  getAll: async (params?: Record<string, any>): Promise<CaseListResponse> => {
+    const response = await api.get<CaseListResponse>(CASES_ENDPOINT, { params });
+    return response.data;
+  },
 
   getById: (id: string) => 
     api.get<Case>(`${CASES_ENDPOINT}/${id}`),
@@ -101,5 +102,3 @@ export const casesApi = {
     limit?: number;
   }) => api.get<CaseListResponse>(`${CASES_ENDPOINT}/archived`, { params }),
 };
-
-// React Query Hooks

@@ -1,6 +1,5 @@
 // lib/api/tasks.ts
 import api from './config';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export enum TaskPriority {
   HIGH = 'HIGH',
@@ -47,9 +46,21 @@ export interface Task {
   };
 }
 
+interface TaskListResponse {
+  tasks: Task[]; // Replace `any` with your actual `Case` type.
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+};
+
+const TASKS_ENDPOINT = "/tasks"
+
 export const taskApi = {
   createTask: async (data: TaskCreateData) => {
-    const { data: response } = await api.post<Task>('/api/tasks', data);
+    const { data: response } = await api.post<Task>(TASKS_ENDPOINT, data);
     return response;
   },
 
@@ -62,18 +73,13 @@ export const taskApi = {
     status?: TaskStatus;
     startDate?: Date;
     endDate?: Date;
-  }) => {
-    const { data } = await api.get<{
-      tasks: Task[];
-      total: number;
-      page: number;
-      limit: number;
-    }>('/api/tasks', { params });
+  }): Promise<TaskListResponse> => {
+    const { data } = await api.get<TaskListResponse>(TASKS_ENDPOINT, { params });
     return data;
   },
 
   getTask: async (id: string) => {
-    const { data } = await api.get<Task>(`/api/tasks/${id}`);
+    const { data } = await api.get<Task>(`${TASKS_ENDPOINT}/${id}`);
     return data;
   },
 
@@ -85,7 +91,7 @@ export const taskApi = {
     const { data } = await api.get<{
       tasks: Task[];
       total: number;
-    }>(`/api/tasks/case/${caseId}`, { params });
+    }>(`${TASKS_ENDPOINT}/case/${caseId}`, { params });
     return data;
   },
 
@@ -97,95 +103,17 @@ export const taskApi = {
     const { data } = await api.get<{
       tasks: Task[];
       total: number;
-    }>(`/api/tasks/priority/${priority}`, { params });
+    }>(`${TASKS_ENDPOINT}/priority/${priority}`, { params });
     return data;
   },
 
   updateTask: async (id: string, data: Partial<Omit<TaskCreateData, 'caseId'>>) => {
-    const { data: response } = await api.patch<Task>(`/api/tasks/${id}`, data);
+    const { data: response } = await api.patch<Task>(`${TASKS_ENDPOINT}/${id}`, data);
     return response;
   },
 
   deleteTask: async (id: string) => {
-    await api.delete(`/api/tasks/${id}`);
+    await api.delete(`${TASKS_ENDPOINT}/${id}`);
   },
 };
 
-// hooks/useTasks.ts
-
-export function useTasks(params?: Parameters<typeof taskApi.getTasks>[0]) {
-  return useQuery({
-    queryKey: ['tasks', params],
-    queryFn: () => taskApi.getTasks(params),
-  });
-}
-
-export function useTask(id: string) {
-  return useQuery({
-    queryKey: ['tasks', id],
-    queryFn: () => taskApi.getTask(id),
-    enabled: !!id,
-  });
-}
-
-export function useTasksByCase(caseId: string, params?: {
-  page?: number;
-  limit?: number;
-  status?: TaskStatus;
-}) {
-  return useQuery({
-    queryKey: ['tasks', 'case', caseId, params],
-    queryFn: () => taskApi.getTasksByCase(caseId, params),
-    enabled: !!caseId,
-  });
-}
-
-export function useTasksByPriority(priority: TaskPriority, params?: {
-  page?: number;
-  limit?: number;
-  status?: TaskStatus;
-}) {
-  return useQuery({
-    queryKey: ['tasks', 'priority', priority, params],
-    queryFn: () => taskApi.getTasksByPriority(priority, params),
-  });
-}
-
-export function useCreateTask() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: taskApi.createTask,
-    onSuccess: (newTask) => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
-      queryClient.invalidateQueries({queryKey:['tasks', 'case', newTask.caseId]});
-      queryClient.setQueryData(['tasks', newTask.id], newTask);
-    },
-  });
-}
-
-export function useUpdateTask() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Omit<TaskCreateData, 'caseId'>> }) =>
-      taskApi.updateTask(id, data),
-    onSuccess: (updatedTask) => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
-      queryClient.invalidateQueries({queryKey:['tasks', 'case', updatedTask.caseId]});
-      queryClient.setQueryData(['tasks', updatedTask.id], updatedTask);
-    },
-  });
-}
-
-export function useDeleteTask() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: taskApi.deleteTask,
-    onSuccess: (_, deletedId) => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
-      queryClient.removeQueries({queryKey: ['tasks', deletedId]});
-    },
-  });
-}

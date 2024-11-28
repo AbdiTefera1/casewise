@@ -1,6 +1,6 @@
 import api from './config';
 
-enum UserRole {
+export enum UserRole {
     ADMIN = "ADMIN",
     LAWYER = "LAWYER",
     PARALEGAL = "PARALEGAL",
@@ -35,12 +35,13 @@ export interface LoginCredentials {
   // Auth API functions
   export const authApi = {
     login: async (credentials: LoginCredentials) => {
-      const { data } = await api.post<{ token: string; user: User }>('/api/auth/login', credentials);
+      const { data } = await api.post<{ token: string; user: User }>('/auth/login', credentials);
+      // localStorage.setItem('token', data.token);
       return data;
     },
   
     register: async (userData: RegisterData) => {
-      const { data } = await api.post<{ token: string; user: User }>('/api/auth/register', userData);
+      const { data } = await api.post<{ token: string; user: User }>('/auth/register', userData);
       return data;
     },
   
@@ -62,21 +63,21 @@ export interface LoginCredentials {
         total: number;
         page: number;
         limit: number;
-      }>('/api/users', { params });
+      }>('/users', { params });
       return data;
     },
   
     getUser: async (id: string) => {
-      const { data } = await api.get<User>(`/api/users/${id}`);
+      const { data } = await api.get<User>(`/users/${id}`);
       return data;
     },
   
     updateUser: async (id: string, userData: Partial<User>) => {
-      const { data } = await api.patch<User>(`/api/users/${id}`, { ...userData, avator: userData.avator });
+      const { data } = await api.patch<User>(`/users/${id}`, { ...userData, avator: userData.avator });
       return data;
     },
   
     deleteUser: async (id: string) => {
-      await api.delete(`/api/users/${id}`);
+      await api.delete(`/users/${id}`);
     },
   };

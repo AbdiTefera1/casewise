@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // app/api/cases/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import {generateCaseNumber} from '@/lib/utils';
 import { auth } from '@/lib/auth';
 import { CaseStatus, Prisma } from '@prisma/client';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const session = await auth(request);
     
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     const session = await auth(request);
     
@@ -126,6 +126,12 @@ export async function GET(request: Request) {
       }),
       prisma.case.count({ where })
     ]);
+
+    if(total === 0){
+      console.log("no cases")
+    }else{
+      console.log("something went wrong")
+    }
 
     return NextResponse.json({
       cases,

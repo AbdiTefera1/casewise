@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // app/api/invoices/status/[status]/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { InvoiceStatus, Prisma } from '@prisma/client';
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { status: string } }
 ) {
   try {

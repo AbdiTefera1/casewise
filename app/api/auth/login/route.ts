@@ -29,22 +29,37 @@ export async function POST(request: Request) {
       );
     }
 
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
-      process.env.JWT_SECRET!,
-      { expiresIn: '24h' }
-    );
-
+    // const token = jwt.sign(
+    //   { userId: user.id },
+    //   process.env.JWT_SECRET!,
+    //   { expiresIn: '24h' }
+    // );
+    // , email: user.email, role: user.role, organizationId: user.organizationId
     // return NextResponse.json({ token, user: { 
     //   id: user.id,
     //   email: user.email,
     //   role: user.role
     // }});
 
+    const token = jwt.sign(
+      { userId: user.id, email: user.email, role: user.role, organizationId: user.organizationId },
+      process.env.JWT_SECRET!,
+      { expiresIn: '24h' }
+    );
+
+    // Create the response object with user data and token
     const response = NextResponse.json(
-        { message: 'Login successful', token: token },
-        { status: 200 }
-      );
+      {
+        message: 'Login successful',
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role
+        }
+      },
+      { status: 200 }
+    );
       
       response.cookies.set('token', token, {
         httpOnly: true,
@@ -52,6 +67,7 @@ export async function POST(request: Request) {
         sameSite: 'strict',
         maxAge: 86400 // 24 hours
       });
+
   
       return response;
     

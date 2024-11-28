@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // app/api/tasks/priority/[priority]/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { Prisma, TaskPriority, TaskStatus } from '@prisma/client';
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { priority: string } }
 ) {
   try {

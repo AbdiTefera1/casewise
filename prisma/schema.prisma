@@ -18,12 +18,20 @@ enum UserRole {
   ADMIN
   LAWYER
   PARALEGAL
+  USER
 }
 
 enum CaseStatus {
   ACTIVE
   PENDING
   ARCHIVED
+}
+
+enum CasePriority {
+  HIGH
+  MEDIUM
+  LOW
+  URGENT
 }
 
 enum ClientStatus {
@@ -165,6 +173,7 @@ model Case {
   title          String
   description    String     @db.Text
   status         CaseStatus
+  priority       CasePriority?
   caseNumber     String
   startDate      DateTime?
   endDate        DateTime?

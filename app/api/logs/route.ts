@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // app/api/logs/[id]/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 
@@ -8,7 +8,7 @@ interface Props {
   params: { id: string }
 }
 
-export async function GET(request: Request, { params }: Props) {
+export async function GET(request: NextRequest, { params }: Props) {
   try {
     const session = await auth(request);
     if (!session || session.user.role !== 'ADMIN') {

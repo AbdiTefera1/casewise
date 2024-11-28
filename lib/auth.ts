@@ -3,8 +3,9 @@
 import * as jwt from 'jsonwebtoken';
 import { prisma } from './prisma';
 import * as bcrypt from 'bcryptjs';
+import { NextRequest } from 'next/server';
 
-export async function auth(request: Request) {
+export async function auth(request: NextRequest) {
   try {
     const authorization = request.headers.get('authorization');
 

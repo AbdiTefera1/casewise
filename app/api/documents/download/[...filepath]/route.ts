@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // app/api/documents/download/[...filepath]/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createReadStream } from 'fs';
 import { stat } from 'fs/promises';
 import { auth } from '@/lib/auth';
@@ -9,7 +9,7 @@ import { prisma } from '@/lib/prisma';
 import { storage } from '@/lib/storage';
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { filepath: string[] } }
 ) {
   try {

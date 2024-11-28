@@ -1,3 +1,7 @@
+"use client"
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { casesApi, CaseStatus } from '@/lib/api/cases'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -11,22 +15,26 @@ interface UpdateCaseData {
   }
 
 export const useCases = (params?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    sortBy?: string;
-    sortOrder?: 'asc' | 'desc';
-    status?: CaseStatus;
-    startDate?: Date;
-    endDate?: Date;
-    lawyerId?: string;
-    clientId?: string;
-  }) => {
-    return useQuery({
-      queryKey: ['cases', params],
-      queryFn: () => casesApi.getAll(params),
-    });
-  };
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  status?: CaseStatus;
+  startDate?: Date;
+  endDate?: Date;
+  lawyerId?: string;
+  clientId?: string;
+}) => {
+  return useQuery({
+    queryKey: ['cases', params],
+    queryFn: async () => {
+      const { cases, pagination } = await casesApi.getAll(params);
+      return { cases, pagination };
+    },
+  });
+};
+
   
   export const useCase = (id: string) => {
     return useQuery({

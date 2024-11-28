@@ -1,4 +1,6 @@
 // hooks/usePayments.ts
+"use client"
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { paymentApi } from '../lib/api/payments';
 

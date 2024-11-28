@@ -1,3 +1,5 @@
+"use client"
+
 import { appointmentApi, AppointmentCreateData } from '@/lib/api/appointments';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 

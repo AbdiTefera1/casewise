@@ -1,4 +1,6 @@
 // hooks/useDocuments.ts
+"use client"
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {documentApi} from '@/lib/api/documents'
 

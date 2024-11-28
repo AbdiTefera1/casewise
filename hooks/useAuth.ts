@@ -1,7 +1,10 @@
+"use client"
+
 // hooks/useAuth.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authApi, LoginCredentials, RegisterData } from '@/lib/api/users';
 import { useAuthStore } from '@/zustand/auth';
+import api from '@/lib/api/config';
 
 export function useAuth() {
   const queryClient = useQueryClient();
@@ -11,6 +14,7 @@ export function useAuth() {
     mutationFn: (credentials: LoginCredentials) => authApi.login(credentials),
     onSuccess: ({ user, token }) => {
       setAuth(user, token);
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     },
   });
 
