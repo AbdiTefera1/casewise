@@ -29,20 +29,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // const token = jwt.sign(
-    //   { userId: user.id },
-    //   process.env.JWT_SECRET!,
-    //   { expiresIn: '24h' }
-    // );
-    // , email: user.email, role: user.role, organizationId: user.organizationId
-    // return NextResponse.json({ token, user: { 
-    //   id: user.id,
-    //   email: user.email,
-    //   role: user.role
-    // }});
 
     const token = jwt.sign(
-      { userId: user.id, email: user.email, role: user.role, organizationId: user.organizationId },
+      { userId: user.id, email: user.email, role: user.role, organizationId: user.organizationId, name: user.name },
       process.env.JWT_SECRET!,
       { expiresIn: '24h' }
     );
@@ -55,7 +44,9 @@ export async function POST(request: Request) {
         user: {
           id: user.id,
           email: user.email,
-          role: user.role
+          role: user.role,
+          name: user.name,
+          organizationId: user.organizationId
         }
       },
       { status: 200 }

@@ -24,6 +24,7 @@ export async function GET(
         id: true,
         email: true,
         role: true,
+        name: true,
         organizationId: true,
         createdAt: true,
         updatedAt: true
@@ -47,9 +48,60 @@ export async function GET(
   }
 }
 
+// export async function PATCH(
+//   request: NextRequest,
+//   context: { params: { id: string } }
+// ) {
+//   try {
+//     const session = await auth(request);
+//     // console.log('Params ID:', params.id);
+    
+//     if (!session) {
+//       return NextResponse.json(
+//         { error: 'Unauthorized' },
+//         { status: 401 }
+//       );
+//     }
+
+//     const { params } = await context; // Ensure params are awaited
+//     const { id } = params; // Access the `id` field from params
+//     console.log('Params ID:', id);
+
+//     const data = await request.json();
+//     console.log('Parsed Data:', data);
+    
+//     // Remove sensitive fields that shouldn't be updated directly
+//     delete data.password;
+//     delete data.email; // If you want to handle email updates separately
+
+//     const user = await prisma.user.update({
+//       where: { id },
+//       data,
+//       select: {
+//         id: true,
+//         email: true,
+//         role: true,
+//         organizationId: true,
+//         name:true,
+//         createdAt: true,
+//         updatedAt: true
+//       }
+//     });
+
+//     return NextResponse.json({ user });
+    
+//   } catch (error) {
+//     return NextResponse.json(
+//       { error: `Internal server error ${error}` },
+//       { status: 500 }
+//     );
+//   }
+// }
+
+
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await auth(request);
@@ -61,20 +113,27 @@ export async function PATCH(
       );
     }
 
+    // Awaiting params directly from context
+    const params = await context.params; // Await params
+    const { id } = params; // Access the `id` field from params
+    console.log('Params ID:', id);
+
     const data = await request.json();
+    console.log('Parsed Data:', data);
     
     // Remove sensitive fields that shouldn't be updated directly
     delete data.password;
     delete data.email; // If you want to handle email updates separately
 
     const user = await prisma.user.update({
-      where: { id: params.id },
+      where: { id },
       data,
       select: {
         id: true,
         email: true,
         role: true,
         organizationId: true,
+        name: true,
         createdAt: true,
         updatedAt: true
       }
@@ -83,12 +142,14 @@ export async function PATCH(
     return NextResponse.json({ user });
     
   } catch (error) {
+    console.error('Error updating user:', error); // Log the error for debugging
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: `Internal server error ${error}` }, // Use error.message for clarity
       { status: 500 }
     );
   }
 }
+
 
 export async function DELETE(
   request: NextRequest,

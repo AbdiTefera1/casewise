@@ -9,12 +9,16 @@ export async function auth(request: NextRequest) {
   try {
     const authorization = request.headers.get('authorization');
 
+    // console.log("Here is authorization that come from headers: ",authorization)
+
     if (!authorization?.startsWith('Bearer ')) {
+      console.warn('Authorization header missing or invalid');
       return null;
     }
 
     const token = authorization.substring(7);
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwt.JwtPayload;
+    // console.log('Decoded Token:', decoded);
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
@@ -22,7 +26,8 @@ export async function auth(request: NextRequest) {
         id: true,
         email: true,
         role: true,
-        organizationId: true
+        organizationId: true,
+        name: true
       }
     });
 

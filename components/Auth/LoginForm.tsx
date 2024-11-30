@@ -17,22 +17,6 @@ export const LoginForm = () => {
     }
   }, [user, router]);
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   const formData = new FormData(e.target as HTMLFormElement);
-
-  //   try {
-  //     const resp = await login({
-  //       email: formData.get('email') as string,
-  //       password: formData.get('password') as string,
-  //     });
-  //     console.log(resp)
-  //     // No need to redirect here; useEffect will handle it
-  //   } catch (error) {
-  //     console.error('Login failed:', error);
-  //     // Optionally handle UI feedback for login failure
-  //   }
-  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

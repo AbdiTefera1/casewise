@@ -26,7 +26,6 @@ export const RegisterForm = () => {
       await register({
         email: formData.get('email') as string,
         password: formData.get('password') as string,
-        organizationId: "1ef7940d-b65c-409c-b9fb-f26e60cc1399",
         role: UserRole.ADMIN,
         name: formData.get("FullName") as string
       });

@@ -16,7 +16,6 @@ export interface LoginCredentials {
     email: string;
     password: string;
     name: string;
-    organizationId: string;
     role: UserRole;
     avator?: string;
   }
@@ -28,8 +27,6 @@ export interface LoginCredentials {
     role: UserRole;
     avator?: string;
     organizationId: string;
-    createdAt: Date;
-    updatedAt: Date;
   }
   
   // Auth API functions
