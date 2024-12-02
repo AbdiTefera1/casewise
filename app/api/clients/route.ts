@@ -4,13 +4,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { validateClientData } from '@/lib/validators';
-import {generateClientNumber} from '@/lib/utils'
+import { generateClientNumber } from '@/lib/utils'
 import { Prisma, ClientStatus, CompanyType } from '@prisma/client';
 
 export async function POST(request: NextRequest) {
   try {
     const session = await auth(request);
-    
+
     if (!session) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -18,12 +18,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if(session.user.organizationId === null){
-        throw new Error("organizationId cannot be null");
+    if (session.user.organizationId === null) {
+      throw new Error("organizationId cannot be null");
     }
 
     const data = await request.json();
-    
+
     // Validate client data
     const validationResult = validateClientData(data);
     if (!validationResult.success) {
@@ -34,7 +34,9 @@ export async function POST(request: NextRequest) {
     }
 
     const {
-      name,
+      firstName,
+      middleName,
+      lastName,
       contactInfo,
       type,
       status = 'ACTIVE',
@@ -47,7 +49,9 @@ export async function POST(request: NextRequest) {
 
     const client = await prisma.client.create({
       data: {
-        name,
+        firstName,
+      middleName,
+      lastName,
         type,
         companyName,
         contactInfo,
@@ -87,7 +91,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ client }, { status: 201 });
-    
+
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal server error' },
@@ -99,7 +103,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const session = await auth(request);
-    
+
     if (!session) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -107,8 +111,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    if(session.user.organizationId === null){
-        throw new Error("organizationId cannot be null");
+    if (session.user.organizationId === null) {
+      throw new Error("organizationId cannot be null");
     }
 
     const { searchParams } = new URL(request.url);
@@ -127,7 +131,7 @@ export async function GET(request: NextRequest) {
       organizationId: session.user.organizationId,
       deletedAt: null,
       OR: search ? [
-        { name: { contains: search, mode: 'insensitive' } },
+        { firstName: { contains: search, mode: 'insensitive' } },
         { companyName: { contains: search, mode: 'insensitive' } },
         { clientNumber: { contains: search, mode: 'insensitive' } }
       ] : undefined,
@@ -168,7 +172,7 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil(total / limit)
       }
     });
-    
+
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal server error' },

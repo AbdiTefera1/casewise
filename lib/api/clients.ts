@@ -14,6 +14,11 @@ export enum ClientStatus {
   INACTIVE = 'INACTIVE',
   SUSPENDED = 'SUSPENDED'
 }
+
+export enum Gender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE'
+}
   
 export interface ContactInfo {
   phone?: string;
@@ -30,11 +35,13 @@ export interface ContactInfo {
 export interface Client {
   id: string;
   organizationId: string;
-  name: string;
+  firstName: string;
+      middleName: string;
+      lastName?: string;
   email?: string;
   type?: CompanyType;
   contactInfo?: ContactInfo;
-  clientNumber: string;
+  clientNumber?: string;
   companyName?: string;
   industry?: string;
   website?: string;
@@ -57,12 +64,14 @@ export interface ClientListResponse {
 }
 
 
-interface CreateClientData {
-  name: string;
+export interface CreateClientData {
+  firstName: string;
+      middleName: string;
+      lastName?: string;
   email?: string;
   type?: CompanyType;
+  gender?: Gender; 
   contactInfo?: ContactInfo;
-  clientNumber: string;
   companyName?: string;
   industry?: string;
   website?: string;

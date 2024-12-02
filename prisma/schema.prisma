@@ -96,6 +96,11 @@ enum PaymentMethod {
   OTHER
 }
 
+enum Gender {
+  MALE
+  FEMALE
+}
+
 enum PaymentStatus {
   COMPLETED
   PENDING
@@ -168,20 +173,20 @@ model User {
 }
 
 model Case {
-  id             String     @id @default(uuid())
+  id             String        @id @default(uuid())
   organizationId String
   clientId       String?
   lawyerId       String
   title          String
-  description    String     @db.Text
+  description    String        @db.Text
   status         CaseStatus
   priority       CasePriority?
   caseNumber     String
   startDate      DateTime?
   endDate        DateTime?
   deletedAt      DateTime?
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   // Relations
   organization Organization  @relation(fields: [organizationId], references: [id])
@@ -200,10 +205,13 @@ model Case {
 model Client {
   id             String        @id @default(uuid())
   organizationId String
-  name           String
+  firstName      String
+  middleName     String
+  lastName       String?
   email          String?
   type           CompanyType?
   contactInfo    Json?
+  gender         Gender?
   clientNumber   String
   companyName    String?
   industry       String?
