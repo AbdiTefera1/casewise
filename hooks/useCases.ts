@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { casesApi, CaseStatus } from '@/lib/api/cases'
+import { CasePriority, casesApi, CaseStatus } from '@/lib/api/cases'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface UpdateCaseData {
@@ -21,6 +21,7 @@ export const useCases = (params?: {
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
   status?: CaseStatus;
+  priority?: CasePriority;
   startDate?: Date;
   endDate?: Date;
   lawyerId?: string;

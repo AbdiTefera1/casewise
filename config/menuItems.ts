@@ -42,27 +42,7 @@ export const MENU_ITEMS: MenuItem[] = [
     icon: FaTasks,
     label: 'Tasks',
     href: '/tasks',
-    roles: [UserRole.ADMIN, UserRole.LAWYER, UserRole.PARALEGAL],
-    subItems: [
-      {
-        id: 'all-tasks',
-        label: 'All Tasks',
-        href: '/tasks',
-        roles: [UserRole.ADMIN, UserRole.LAWYER, UserRole.PARALEGAL]
-      },
-      {
-        id: 'my-tasks',
-        label: 'My Tasks',
-        href: '/tasks/my-tasks',
-        roles: [UserRole.ADMIN, UserRole.LAWYER, UserRole.PARALEGAL]
-      },
-      {
-        id: 'create-task',
-        label: 'Create New Task',
-        href: '/tasks/create',
-        roles: [UserRole.ADMIN, UserRole.LAWYER]
-      }
-    ]
+    roles: [UserRole.ADMIN, UserRole.LAWYER, UserRole.PARALEGAL]
   },
   {
     id: 'clients',

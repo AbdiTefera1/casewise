@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // lib/api/cases.ts
 import api from '@/lib/api/config';
-import { CasePriority } from '@prisma/client';
+// import { CasePriority } from '@prisma/client';
 
 // Types
 export enum CaseStatus {
@@ -10,6 +10,14 @@ export enum CaseStatus {
   CLOSED = 'CLOSED',
   ARCHIVED = 'ARCHIVED'
 }
+
+export enum CasePriority {
+  HIGH = "HIGH",
+  MEDIUM = "MEDIUM",
+  LOW = "LOW",
+  URGENT = "URGENT"
+}
+
 
 export interface Case {
   id: string;

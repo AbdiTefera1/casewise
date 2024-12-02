@@ -8,7 +8,11 @@ import { MENU_ITEMS, MenuItem } from '@/config/menuItems';
 import { UserRole } from '@prisma/client';
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 
-const Sidebar = () => {
+interface SidebarProps {
+  isMenuOpen: boolean;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({isMenuOpen}) => {
   const pathname = usePathname();
   const { user } = useAuthStore();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
@@ -40,7 +44,7 @@ const Sidebar = () => {
       <div key={item.id}>
         <div
           className={`
-            flex items-center justify-between px-4 py-3 cursor-pointer
+            flex items-center justify-between px-1 py-3 cursor-pointer
             ${isItemActive ? 'bg-navy-700 text-white' : 'text-gray-300 hover:bg-navy-800'}
             rounded-lg transition-colors duration-150
           `}
@@ -51,9 +55,10 @@ const Sidebar = () => {
             className="flex items-center flex-1 gap-3"
             onClick={(e) => hasSubItems && e.preventDefault()}
           >
-            <span className="text-sm">{item.label}</span>
+            <span><item.icon size={24}/></span>
+            {isMenuOpen && <span className="text-sm">{item.label}</span>}
           </Link>
-          {hasSubItems && (
+          {isMenuOpen && hasSubItems && (
             isExpanded ? (
               <FaChevronDown className="w-3 h-3" />
             ) : (
@@ -62,7 +67,7 @@ const Sidebar = () => {
           )}
         </div>
 
-        {hasSubItems && isExpanded && (
+        {isMenuOpen && hasSubItems && isExpanded && (
           <div className="ml-8 mt-1 space-y-1">
             {item.subItems!.map(subItem => (
               <Link
@@ -85,20 +90,21 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="w-64 h-screen bg-navy-900 text-white flex flex-col fixed left-0 top-0">
+    <aside className={`h-screen bg-navy-900 text-white flex flex-col fixed left-0 top-20 transition-all duration-300 ${isMenuOpen ? 'w-64' : 'w-16'}`}>
+      {/* {`h-screen bg-navy-900 text-white flex flex-col fixed left-0 top-20 transition-all duration-300 ${isMenuOpen ? 'w-64' : 'w-16'}`} */}
 
-      <div className="p-4 border-b border-navy-700">
+      {/* <div className="p-4 border-b border-navy-700">
         <Link href="/dashboard" className="flex items-center gap-3">
           <div className="w-8 h-8 bg-gray-300 rounded"></div>
           <span className="text-xl text-white font-bold">Casewise</span>
         </Link>
-      </div>
+      </div> */}
 
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {authorizedItems.map(renderMenuItem)}
       </nav>
 
-      <div className="p-4 border-t border-navy-700">
+      {/* <div className="p-4 border-t border-navy-700">
         <div className="flex items-center gap-3 px-4 py-2">
           <div className="w-10 h-10 rounded-full bg-gray-300"></div>
           <div>
@@ -106,7 +112,7 @@ const Sidebar = () => {
             <p className="text-xs text-gray-400 capitalize">{user.role}</p>
           </div>
         </div>
-      </div>
+      </div> */}
     </aside>
   );
 };

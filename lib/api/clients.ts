@@ -12,10 +12,9 @@ export enum CompanyType {
 export enum ClientStatus {
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
-  PENDING = 'PENDING',
-  ARCHIVED = 'ARCHIVED'
+  SUSPENDED = 'SUSPENDED'
 }
-
+  
 export interface ContactInfo {
   phone?: string;
   address?: {
@@ -48,10 +47,15 @@ export interface Client {
 }
 
 export interface ClientListResponse {
-  clients: Client[];
-  total: number;
-  pages: number;
+  clients: Client[]; // Array of Client objects
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
+
 
 interface CreateClientData {
   name: string;
@@ -86,7 +90,7 @@ export const clientsApi = {
     type?: CompanyType;
     status?: ClientStatus;
     industry?: string;
-  }) => api.get<ClientListResponse>(CLIENTS_ENDPOINT, { params }),
+  }) => api.get<ClientListResponse>(CLIENTS_ENDPOINT, { params }), 
 
   getById: (id: string) => 
     api.get<Client>(`${CLIENTS_ENDPOINT}/${id}`),
