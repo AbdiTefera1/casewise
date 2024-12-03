@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // app/cases/page.tsx
 'use client';
 
@@ -62,20 +61,23 @@ const CasesPage = () => {
 
   const { data, isLoading } = useCases(getQueryParams());
 
+  const { cases = [], pagination } = data || { cases: [], pagination: { total: 0, pages: 0 } };
+
   // Filter important cases on the frontend when needed
   const filteredCases = useMemo(() => {
-    if (!data?.cases) return [];
+    if (!cases) return [];
 
     if (activeTab === 'IMPORTANT') {
-      return data.cases.filter(caseItem =>
+      return cases.filter(caseItem =>
         isImportantCase(caseItem.status, caseItem.priority)
       );
     }
 
-    return data.cases;
-  }, [data?.cases, activeTab]);
+    return cases;
+  }, [cases, activeTab]);
 
-  const { cases = [], pagination } = data || { cases: [], pagination: { total: 0, pages: 0 } };
+  // const { cases = [], pagination } = data || { cases: [], pagination: { total: 0, pages: 0 } };
+  
 
   if (isLoading) return (<div className="flex items-center justify-center h-screen">
     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
