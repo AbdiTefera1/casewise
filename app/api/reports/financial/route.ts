@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
           invoice: {
             select: {
               invoiceNumber: true,
-              client: { select: { name: true } }
+              client: { select: { firstName: true } }
             }
           }
         }

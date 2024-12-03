@@ -22,7 +22,7 @@ export async function GET(
             total: true,
             client: {
               select: {
-                name: true,
+                firstName: true,
                 email: true
               }
             }

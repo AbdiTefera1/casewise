@@ -51,7 +51,7 @@ export async function GET(
           client: {
             select: {
               id: true,
-              name: true,
+              firstName: true,
               email: true
             }
           },

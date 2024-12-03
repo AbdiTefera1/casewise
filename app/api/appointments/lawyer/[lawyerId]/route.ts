@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // app/api/appointments/lawyer/[lawyerId]/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { AppointmentStatus, Prisma } from '@prisma/client';
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { lawyerId: string } }
 ) {
   try {
@@ -50,7 +50,7 @@ export async function GET(
           client: {
             select: {
               id: true,
-              name: true,
+              firstName: true,
               email: true
             }
           },

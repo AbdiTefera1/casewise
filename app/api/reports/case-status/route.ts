@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
         orderBy: { createdAt: 'desc' },
         include: {
           lawyer: { select: { name: true } },
-          client: { select: { name: true } }
+          client: { select: { firstName: true } }
         }
       })
     ]);

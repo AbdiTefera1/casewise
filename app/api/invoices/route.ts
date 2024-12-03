@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
         client: {
           select: {
             id: true,
-            name: true,
+            firstName: true,
             email: true,
             
           }
@@ -135,7 +135,7 @@ export async function GET(request: NextRequest) {
       organizationId: session.user.organizationId,
       OR: search ? [
         { invoiceNumber: { contains: search } },
-        { client: { name: { contains: search, mode: 'insensitive' } } },
+        { client: { firstName: { contains: search, mode: 'insensitive' } } },
         { case: { title: { contains: search, mode: 'insensitive' } } }
       ] : undefined,
       createdAt: {
@@ -159,7 +159,7 @@ export async function GET(request: NextRequest) {
           client: {
             select: {
               id: true,
-              name: true,
+              firstName: true,
               email: true,
             }
           },

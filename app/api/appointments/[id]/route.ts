@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // app/api/appointments/[id]/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { validateAppointmentData } from '@/lib/validators';
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -35,7 +35,7 @@ export async function GET(
         client: {
           select: {
             id: true,
-            name: true,
+            firstName: true,
             email: true
           }
         },
@@ -67,7 +67,7 @@ export async function GET(
 }
 
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -148,7 +148,7 @@ export async function PATCH(
         client: {
           select: {
             id: true,
-            name: true,
+            firstName: true,
             email: true
           }
         },
@@ -173,7 +173,7 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {

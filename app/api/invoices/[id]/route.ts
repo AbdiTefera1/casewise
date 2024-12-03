@@ -33,7 +33,7 @@ export async function GET(
         client: {
           select: {
             id: true,
-            name: true,
+            firstName: true,
             email: true,
           }
         },
@@ -146,7 +146,7 @@ export async function PATCH(
         client: {
           select: {
             id: true,
-            name: true,
+            firstName: true,
             email: true,
           }
         },
