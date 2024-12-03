@@ -5,7 +5,7 @@ import { useAuthStore } from '@/zustand/auth';
 import { useAuth } from '@/hooks/useAuth';
 import Link from 'next/link';
 
-export const LoginPage = () => {
+const LoginPage = () => {
   const { login, isLoading, error } = useAuth();
   const { user } = useAuthStore(); // Access user state from Zustand
   const router = useRouter();
@@ -103,3 +103,5 @@ export const LoginPage = () => {
     </div>
   );
 };
+
+export default LoginPage;

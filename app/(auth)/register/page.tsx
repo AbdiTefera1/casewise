@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { UserRole } from '@/lib/api/users';
 import Link from 'next/link';
 
-export const RegisterPage = () => {
+const RegisterPage = () => {
   const { register, isLoading, error } = useAuth();
   const { user } = useAuthStore(); 
   const router = useRouter();
@@ -108,3 +108,5 @@ export const RegisterPage = () => {
     </div>
   );
 };
+
+export default RegisterPage;
