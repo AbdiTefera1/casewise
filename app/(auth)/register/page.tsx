@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation'; // For App Router
 import { useAuthStore } from '@/zustand/auth'; 
 import { useAuth } from '@/hooks/useAuth';
-import { UserRole } from '@/lib/api/users';
 import Link from 'next/link';
 
 const RegisterPage = () => {
@@ -26,7 +25,6 @@ const RegisterPage = () => {
       await register({
         email: formData.get('email') as string,
         password: formData.get('password') as string,
-        role: UserRole.ADMIN,
         name: formData.get("FullName") as string
       });
       

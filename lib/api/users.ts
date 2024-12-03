@@ -16,7 +16,7 @@ export interface LoginCredentials {
     email: string;
     password: string;
     name: string;
-    role: UserRole;
+    role?: UserRole;
     avator?: string;
   }
   
@@ -25,7 +25,7 @@ export interface LoginCredentials {
     email: string;
     name: string;
     role: UserRole;
-    avator?: string;
+    avator: string;
     organizationId: string;
   }
   
