@@ -6,10 +6,11 @@ import { auth } from '@/lib/auth';
 import { CaseStatus } from '@prisma/client';
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { status: CaseStatus } }
+    request: NextRequest,
+  { params }: { params: Promise<{ status: CaseStatus }> }
 ) {
   try {
+    const { status } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -32,7 +33,7 @@ export async function GET(
 
     const where = {
       organizationId: session.user.organizationId,
-      status: params.status,
+      status: status,
       deletedAt: null
     };
 

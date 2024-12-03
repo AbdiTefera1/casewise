@@ -8,9 +8,10 @@ import { validateClientData } from '@/lib/validators';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -26,7 +27,7 @@ export async function GET(
 
     const client = await prisma.client.findUnique({
       where: {
-        id: params.id,
+        id,
         organizationId: session.user.organizationId,
         deletedAt: null
       },
@@ -70,9 +71,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -100,7 +102,7 @@ export async function PATCH(
     // Get current client data for comparison
     const currentClient = await prisma.client.findUnique({
       where: {
-        id: params.id,
+        id,
         organizationId: session.user.organizationId
       },
       select: {
@@ -134,7 +136,7 @@ export async function PATCH(
     const [updatedClient] = await prisma.$transaction([
       prisma.client.update({
         where: {
-          id: params.id,
+          id,
           organizationId: session.user.organizationId
         },
         data: {
@@ -164,9 +166,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -183,7 +186,7 @@ export async function DELETE(
     // Check for active cases
     const activeCases = await prisma.case.count({
       where: {
-        clientId: params.id,
+        clientId: id,
         status: {
           in: ['ACTIVE', 'PENDING']
         },
@@ -201,7 +204,7 @@ export async function DELETE(
     await prisma.$transaction([
       prisma.client.update({
         where: {
-          id: params.id,
+          id,
           organizationId: session.user.organizationId
         },
         data: {

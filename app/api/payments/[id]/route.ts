@@ -4,17 +4,18 @@ import { prisma } from '@/lib/prisma';
 import { auth} from '@/lib/auth';
 
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth(req);
+    const { id } = await params; 
+    const session = await auth(request);
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const payment = await prisma.payment.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         invoice: {
           select: {
@@ -49,11 +50,12 @@ export async function GET(
 }
 
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth(req);
+    const { id } = await params; 
+    const session = await auth(request);
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -61,7 +63,7 @@ export async function DELETE(
     // Delete payment and update invoice status in a transaction
     await prisma.$transaction(async (tx) => {
       const payment = await tx.payment.findUnique({
-        where: { id: params.id },
+        where: { id },
         include: { invoice: true }
       });
 
@@ -70,7 +72,7 @@ export async function DELETE(
       }
 
       await tx.payment.delete({
-        where: { id: params.id }
+        where: { id }
       });
 
       // Recalculate total payments for the invoice

@@ -7,9 +7,10 @@ import { DocumentCategory, Prisma } from '@prisma/client';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { caseId: string } }
+  { params }: { params: Promise<{ caseId: string }> }
 ) {
   try {
+    const { caseId } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -32,7 +33,7 @@ export async function GET(
     const skip = (page - 1) * limit;
 
     const where: Prisma.DocumentWhereInput = {
-      caseId: params.caseId,
+      caseId,
       organizationId: session.user.organizationId,
       category: category as DocumentCategory || undefined,
       OR: search ? [

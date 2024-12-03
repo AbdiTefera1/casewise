@@ -7,9 +7,10 @@ import { storage } from '@/lib/storage';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -27,7 +28,7 @@ export async function GET(
 
     const document = await prisma.document.findFirst({
       where: {
-        id: params.id,
+        id,
         organizationId: session.user.organizationId
       },
       include: {
@@ -74,9 +75,10 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -92,7 +94,7 @@ export async function DELETE(
 
     const document = await prisma.document.findFirst({
       where: {
-        id: params.id,
+        id,
         organizationId: session.user.organizationId
       }
     });
@@ -109,7 +111,7 @@ export async function DELETE(
 
     // Delete from database
     await prisma.document.delete({
-      where: { id: params.id }
+      where: { id }
     });
 
     return NextResponse.json(

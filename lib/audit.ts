@@ -4,7 +4,7 @@ import { prisma } from './prisma';
 import { auth } from './auth';
 import { headers } from 'next/headers';
 import { Prisma } from '@prisma/client';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 interface AuditLogParams {
     action: string;
@@ -16,7 +16,7 @@ interface AuditLogParams {
   }
 
 export async function createAuditLog(
-    req: Request,
+    req: NextRequest,
     {
       action,
       entity,

@@ -7,9 +7,10 @@ import { validateTaskData } from '@/lib/validators';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -25,7 +26,7 @@ export async function GET(
 
     const task = await prisma.task.findFirst({
       where: {
-        id: params.id,
+        id,
         case: {
           organizationId: session.user.organizationId
         }
@@ -73,9 +74,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -91,7 +93,7 @@ export async function PATCH(
 
     const task = await prisma.task.findFirst({
       where: {
-        id: params.id,
+        id,
         case: {
           organizationId: session.user.organizationId
         }
@@ -116,7 +118,7 @@ export async function PATCH(
     }
 
     const updatedTask = await prisma.task.update({
-      where: { id: params.id },
+      where: { id },
       data,
       include: {
         assignee: {
@@ -148,9 +150,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -166,7 +169,7 @@ export async function DELETE(
 
     const task = await prisma.task.findFirst({
       where: {
-        id: params.id,
+        id,
         case: {
           organizationId: session.user.organizationId
         }
@@ -181,7 +184,7 @@ export async function DELETE(
     }
 
     await prisma.task.delete({
-      where: { id: params.id }
+      where: { id }
     });
 
     return NextResponse.json(

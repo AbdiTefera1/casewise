@@ -7,9 +7,10 @@ import { AppointmentStatus, Prisma } from '@prisma/client';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { clientId: string } }
+  { params }: { params: Promise<{ clientId: string }> }
 ) {
   try {
+    const { clientId } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -28,7 +29,7 @@ export async function GET(
     const skip = (page - 1) * limit;
 
     const where: Prisma.AppointmentWhereInput = {
-      clientId: params.clientId,
+      clientId,
       organizationId: session.user.organizationId,
       status: status as AppointmentStatus || undefined,
       startTime: upcoming ? {

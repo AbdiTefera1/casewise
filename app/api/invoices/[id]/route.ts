@@ -7,9 +7,10 @@ import { calculateInvoiceTotals } from '@/lib/validators';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -25,7 +26,7 @@ export async function GET(
 
     const invoice = await prisma.invoice.findFirst({
       where: {
-        id: params.id,
+        id,
         organizationId: session.user.organizationId
       },
       include: {
@@ -67,9 +68,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -87,7 +89,7 @@ export async function PATCH(
     
     const invoice = await prisma.invoice.findFirst({
       where: {
-        id: params.id,
+        id,
         organizationId: session.user.organizationId
       }
     });
@@ -104,7 +106,7 @@ export async function PATCH(
       
       // Update items
       await prisma.invoiceItem.deleteMany({
-        where: { invoiceId: params.id }
+        where: { invoiceId: id }
       });
 
       interface InvoiceItem {
@@ -117,7 +119,7 @@ export async function PATCH(
 
       await prisma.invoiceItem.createMany({
         data: items.map((item: InvoiceItem) => ({
-          invoiceId: params.id,
+          invoiceId: id,
           description: item.description,
           quantity: item.quantity,
           rate: item.rate,
@@ -131,7 +133,7 @@ export async function PATCH(
     }
 
     const updatedInvoice = await prisma.invoice.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
         notes: data.notes,
@@ -172,9 +174,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -190,7 +193,7 @@ export async function DELETE(
 
     const invoice = await prisma.invoice.findFirst({
       where: {
-        id: params.id,
+        id,
         organizationId: session.user.organizationId
       }
     });
@@ -204,7 +207,7 @@ export async function DELETE(
 
     // Check if invoice can be deleted (e.g., no payments)
     const payments = await prisma.payment.count({
-      where: { invoiceId: params.id }
+      where: { invoiceId: id }
     });
 
     if (payments > 0) {
@@ -215,7 +218,7 @@ export async function DELETE(
     }
 
     await prisma.invoice.delete({
-      where: { id: params.id }
+      where: { id }
     });
 
     return NextResponse.json(

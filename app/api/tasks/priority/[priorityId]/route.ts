@@ -7,9 +7,10 @@ import { Prisma, TaskPriority, TaskStatus } from '@prisma/client';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { priority: string } }
+  { params }: { params: Promise<{ priority: string }> }
 ) {
   try {
+    const { priority } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -31,7 +32,7 @@ export async function GET(
     const skip = (page - 1) * limit;
 
     const where: Prisma.TaskWhereInput = {
-      priority: params.priority.toUpperCase() as TaskPriority,
+      priority: priority.toUpperCase() as TaskPriority,
       case: {
         organizationId: session.user.organizationId,
         deletedAt: null

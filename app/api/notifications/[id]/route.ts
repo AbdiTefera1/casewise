@@ -4,17 +4,18 @@ import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 
 export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth(req);
+    const { id } = await params; 
+    const session = await auth(request);
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const notification = await prisma.notification.findUnique({
-      where: { id: params.id }
+      where: { id }
     });
 
     if (!notification) {
@@ -33,7 +34,7 @@ export async function PATCH(
     }
 
     const updatedNotification = await prisma.notification.update({
-      where: { id: params.id },
+      where: { id},
       data: { read: true }
     });
 

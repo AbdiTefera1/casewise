@@ -7,9 +7,10 @@ import { validateLawyerData } from '@/lib/validators';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -21,7 +22,7 @@ export async function GET(
 
     const lawyer = await prisma.user.findUnique({
       where: {
-        id: params.id,
+        id,
         organizationId: session.user.organizationId,
         role: 'LAWYER',
         deletedAt: null
@@ -89,12 +90,13 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
-    if (session?.user.role !== 'ADMIN' && session?.user.id !== params.id) {
+    if (session?.user.role !== 'ADMIN' && session?.user.id !== id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -115,7 +117,7 @@ export async function PATCH(
 
     const updatedLawyer = await prisma.user.update({
       where: {
-        id: params.id,
+        id: id,
         organizationId: session.user.organizationId,
         role: 'LAWYER'
       },
@@ -143,9 +145,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (session?.user.role !== 'ADMIN') {
@@ -157,7 +160,7 @@ export async function DELETE(
 
     const activeCases = await prisma.case.count({
       where: {
-        lawyerId: params.id,
+        lawyerId: id,
         status: 'ACTIVE',
         deletedAt: null
       }
@@ -173,7 +176,7 @@ export async function DELETE(
     await prisma.$transaction([
       prisma.user.update({
         where: {
-          id: params.id,
+          id,
           organizationId: session.user.organizationId,
           role: 'LAWYER'
         },
@@ -188,7 +191,7 @@ export async function DELETE(
       }),
       prisma.case.updateMany({
         where: {
-          lawyerId: params.id,
+          lawyerId: id,
           status: {
             not: 'ACTIVE'
           }

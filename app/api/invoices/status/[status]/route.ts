@@ -6,10 +6,11 @@ import { auth } from '@/lib/auth';
 import { InvoiceStatus, Prisma } from '@prisma/client';
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { status: string } }
+    request: NextRequest,
+  { params }: { params: Promise<{ status: string }> }
 ) {
   try {
+    const { status } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -32,11 +33,11 @@ export async function GET(
     // Handle overdue status
     const where: Prisma.InvoiceWhereInput = {
       organizationId: session.user.organizationId,
-      ...(params.status === 'OVERDUE' ? {
+      ...(status === 'OVERDUE' ? {
         status: 'UNPAID' as InvoiceStatus ,
         dueDate: { lt: new Date() }
       } : {
-        status: params.status as InvoiceStatus
+        status: status as InvoiceStatus
       })
     };
 

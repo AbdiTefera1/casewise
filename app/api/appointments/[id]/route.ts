@@ -7,9 +7,10 @@ import { validateAppointmentData } from '@/lib/validators';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; // Awaiting params to extract id
     const session = await auth(request);
     
     if (!session) {
@@ -21,7 +22,7 @@ export async function GET(
 
     const appointment = await prisma.appointment.findFirst({
       where: {
-        id: params.id,
+        id,
         organizationId: session.user.organizationId
       },
       include: {
@@ -66,11 +67,13 @@ export async function GET(
   }
 }
 
+
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -82,7 +85,7 @@ export async function PATCH(
 
     const appointment = await prisma.appointment.findFirst({
       where: {
-        id: params.id,
+        id,
         organizationId: session.user.organizationId
       }
     });
@@ -108,7 +111,7 @@ export async function PATCH(
       // Check for time slot availability
       const existingAppointment = await prisma.appointment.findFirst({
         where: {
-          id: { not: params.id },
+          id: { not: id },
           lawyerId: appointment.lawyerId,
           startTime: {
             lte: new Date(data.endTime)
@@ -131,7 +134,7 @@ export async function PATCH(
     }
 
     const updatedAppointment = await prisma.appointment.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         ...data,
         startTime: data.startTime ? new Date(data.startTime) : undefined,
@@ -174,9 +177,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -188,7 +192,7 @@ export async function DELETE(
 
     const appointment = await prisma.appointment.findFirst({
       where: {
-        id: params.id,
+        id,
         organizationId: session.user.organizationId
       }
     });
@@ -201,7 +205,7 @@ export async function DELETE(
     }
 
     await prisma.appointment.update({
-      where: { id: params.id },
+      where: { id },
       data: { status: 'CANCELLED' }
     });
 

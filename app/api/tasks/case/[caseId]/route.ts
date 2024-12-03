@@ -7,9 +7,10 @@ import { Prisma, TaskStatus } from '@prisma/client';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { caseId: string } }
+  { params }: { params: Promise<{ caseId: string }> }
 ) {
   try {
+    const { caseId } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -31,7 +32,7 @@ export async function GET(
     const skip = (page - 1) * limit;
 
     const where: Prisma.TaskWhereInput = {
-      caseId: params.caseId,
+      caseId,
       case: {
         organizationId: session.user.organizationId,
         deletedAt: null

@@ -7,9 +7,10 @@ import { auth } from '@/lib/auth';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -25,7 +26,7 @@ export async function GET(
 
     const case_ = await prisma.case.findUnique({
       where: {
-        id: params.id,
+        id,
         organizationId: session.user.organizationId,
         deletedAt: null
       },
@@ -58,10 +59,11 @@ export async function GET(
 }
 
 export async function PATCH(
-    request: NextRequest,
-    { params }: { params: { id: string } }
-  ) {
-    try {
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params; 
       const session = await auth(request);
       
       if (!session) {
@@ -84,7 +86,7 @@ export async function PATCH(
         userId: string;
         changes: Record<string, { from: any; to: any }>;
       } = {
-        caseId: params.id,
+        caseId: id,
         userId: session.user.id,
         changes: {}
       };
@@ -99,7 +101,7 @@ export async function PATCH(
       const [updatedCase] = await prisma.$transaction([
         prisma.case.update({
           where: {
-            id: params.id,
+            id,
             organizationId: session.user.organizationId
           },
           data: {
@@ -133,9 +135,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -152,7 +155,7 @@ export async function DELETE(
     await prisma.$transaction([
       prisma.case.update({
         where: {
-          id: params.id,
+          id,
           organizationId: session.user.organizationId
         },
         data: { 

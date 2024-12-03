@@ -6,9 +6,10 @@ import { auth } from '@/lib/auth';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -19,7 +20,7 @@ export async function GET(
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: params.id },
+      where: { id },
       select: {
         id: true,
         email: true,
@@ -101,9 +102,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -114,12 +116,12 @@ export async function PATCH(
     }
 
     // Awaiting params directly from context
-    const params = await context.params; // Await params
-    const { id } = params; // Access the `id` field from params
-    console.log('Params ID:', id);
+    // const params = await context.params; // Await params
+    // const { id } = params; // Access the `id` field from params
+    // console.log('Params ID:', id);
 
     const data = await request.json();
-    console.log('Parsed Data:', data);
+    // console.log('Parsed Data:', data);
     
     // Remove sensitive fields that shouldn't be updated directly
     delete data.password;
@@ -153,9 +155,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session || session.user.role !== 'ADMIN') {
@@ -166,7 +169,7 @@ export async function DELETE(
     }
 
     await prisma.user.update({
-      where: { id: params.id },
+      where: { id },
       data: { 
         // Implement soft delete by adding a deletedAt timestamp
         deletedAt: new Date()

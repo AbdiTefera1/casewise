@@ -9,10 +9,11 @@ import { prisma } from '@/lib/prisma';
 import { storage } from '@/lib/storage';
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { filepath: string[] } }
+    request: NextRequest,
+  { params }: { params: Promise<{ filepath: string[] }> }
 ) {
   try {
+    const { filepath } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -26,7 +27,7 @@ export async function GET(
         throw new Error("Organization Id cannot null!");
     }
 
-    const filePath = params.filepath.join('/');
+    const filePath = filepath.join('/');
 
     // Verify document exists in database and user has access
     const document = await prisma.document.findFirst({

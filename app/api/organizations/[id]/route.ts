@@ -6,9 +6,10 @@ import { auth } from '@/lib/auth';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -20,7 +21,7 @@ export async function GET(
 
     const organization = await prisma.organization.findUnique({
       where: { 
-        id: params.id,
+        id,
         deletedAt: null
       },
       include: {
@@ -68,9 +69,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session) {
@@ -81,7 +83,7 @@ export async function PATCH(
     }
 
     const organization = await prisma.organization.findUnique({
-      where: { id: params.id }
+      where: { id }
     });
 
     if (!organization) {
@@ -114,7 +116,7 @@ export async function PATCH(
     }
 
     const updatedOrganization = await prisma.organization.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         name: data.name,
         domain: data.domain,
@@ -135,9 +137,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; 
     const session = await auth(request);
     
     if (!session || session.user.role !== 'ADMIN') {
@@ -151,13 +154,13 @@ export async function DELETE(
     await prisma.$transaction(async (tx) => {
       // Soft delete the organization
       await tx.organization.update({
-        where: { id: params.id },
+        where: { id },
         data: { deletedAt: new Date() }
       });
 
       // Soft delete associated users
       await tx.user.updateMany({
-        where: { organizationId: params.id },
+        where: { organizationId: id },
         data: { deletedAt: new Date() }
       });
 

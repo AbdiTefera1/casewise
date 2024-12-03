@@ -120,7 +120,7 @@ export async function GET(req: NextRequest) {
               invoiceNumber: true,
               client: {
                 select: {
-                  name: true
+                  firstName: true
                 }
               }
             }

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // app/api/appointments/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { validateAppointmentData } from '@/lib/validators';
 import { AppointmentStatus, Prisma } from '@prisma/client';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const session = await auth(request);
     
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
         client: {
           select: {
             id: true,
-            name: true,
+            firstName: true,
             email: true
           }
         },
@@ -92,7 +92,7 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     const session = await auth(request);
     
@@ -117,7 +117,7 @@ export async function GET(request: Request) {
         { title: { contains: search, mode: 'insensitive' } },
         { description: { contains: search, mode: 'insensitive' } },
         { lawyer: { name: { contains: search, mode: 'insensitive' } } },
-        { client: { name: { contains: search, mode: 'insensitive' } } }
+        { client: { firstName: { contains: search, mode: 'insensitive' } } }
       ] : undefined,
       status: status as AppointmentStatus || undefined,
       startTime: date ? {
@@ -144,7 +144,7 @@ export async function GET(request: Request) {
           client: {
             select: {
               id: true,
-              name: true,
+              firstName: true,
               email: true
             }
           },
