@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "bash -c 'echo \"POSTGRES_URL_NON_POOLING: $POSTGRES_URL_NON_POOLING\"; npm install; prisma generate && prisma migrate deploy'",
+    "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma generate && prisma migrate deploy"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.1",

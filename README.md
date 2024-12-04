@@ -8,6 +8,10 @@ First, run the development server:
 npm run dev
 ```
 
+```bash
+"build": "bash -c 'echo \"POSTGRES_URL_NON_POOLING: $POSTGRES_URL_NON_POOLING\"; npm install; prisma generate; prisma migrate deploy'"
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
