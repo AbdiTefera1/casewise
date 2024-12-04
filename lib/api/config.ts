@@ -1,9 +1,13 @@
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 
+
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://casewise-saas.vercel.app/api' 
+  : 'http://localhost:3000/api';
 // Create an axios instance with default configurations
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api', // Base API URL
+  baseURL: API_BASE_URL, // Base API URL
   // timeout: 10000, // Increased timeout to 10 seconds
   withCredentials: true, // Include cookies in requests
 });
