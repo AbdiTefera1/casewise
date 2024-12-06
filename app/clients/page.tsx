@@ -52,7 +52,7 @@ const ClientsPage = () => {
   if (isLoading) return (<div className="flex items-center justify-center h-screen">
     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
   </div>);
-  if (error) return <div className="flex justify-center p-8 text-red-500">Error loading clients</div>;
+  // if (error) return <div className="flex justify-center p-8 text-red-500">Error loading clients</div>;
 
   return (
     <div className="p-6">
