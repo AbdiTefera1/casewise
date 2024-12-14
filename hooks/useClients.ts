@@ -1,22 +1,9 @@
 "use client"
 
-import { ClientStatus, CompanyType, ContactInfo, clientsApi } from '@/lib/api/clients';
+import { ClientStatus, CompanyType, UpdateClientData, clientsApi } from '@/lib/api/clients';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 // React Query Hooks
-interface UpdateClientData {
-    name: string;
-    email?: string;
-    type?: CompanyType;
-    contactInfo?: ContactInfo;
-    clientNumber: string;
-    companyName?: string;
-    industry?: string;
-    website?: string;
-    notes?: string;
-    customFields?: string;
-    status?: ClientStatus;
-  }
 
 export const useClients = (params?: {
     page?: number;

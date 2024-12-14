@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
 import { useState } from 'react';
 import { useClients } from '@/hooks/useClients';
 import Link from 'next/link';
 import { CompanyType, ClientStatus, Client } from '@/lib/api/clients'; 
+import { FaEdit, FaEye } from 'react-icons/fa';
 
 interface SortConfig {
   sortBy: string;
@@ -60,7 +61,7 @@ const ClientsPage = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">Clients</h1>
         <Link 
-          href="/clients/create" 
+          href="/clients/add" 
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
           + Add Client
@@ -167,28 +168,23 @@ const ClientsPage = () => {
               <tr key={client.id} className="hover:bg-gray-50">
                 <td className="border-b px-4 py-2">{(page - 1) * limit + index + 1}</td>
                 <td className="border-b px-4 py-2 text-blue-600">{client.firstName + " " + client.middleName}</td>
-                <td className="border-b px-4 py-2">{client.email || '-'}</td> {/* Display '-' if email is not provided */}
+                <td className="border-b px-4 py-2">{client.email || '-'}</td>
                 <td className="border-b px-4 py-2">{client.clientNumber}</td>
-                {/* Displaying status using ClientStatus enum */}
                 <td className="border-b px-4 py-2">
-                  {/* Checkbox for status */}
-                  <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                    {/* Display checkbox based on status */}
+                 <div className="relative inline-block w-10 mr-2 align-middle select-none">
                     <input
                       type="checkbox"
-                      checked={client.status === ClientStatus.ACTIVE} // Check if status is ACTIVE
-                      readOnly // Make it read-only as it seems to be a display field
+                      checked={client.status === ClientStatus.ACTIVE}
+                      readOnly
                       className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
                     />
-                    {/* You can add a label for better accessibility */}
                     <label className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
                   </div>
-                  {/* Displaying the current status as text */}
-                  {client.status || '-'} {/* Display '-' if status is not provided */}
+                  {client.status || '-'}
                 </td>
-                <td className="border-b px-4 py-2">
-                  {/* Action button */}
-                  <button className="text-gray-400 hover:text-gray-600">⋮</button>
+                <td className="border-b px-4 py-2 flex justify-center gap-2">
+                  <Link className="text-[#4CAF50] hover:text-gray-600" href={`/clients/${client.id}/edit`}><FaEdit size={24}/></Link>
+                  <Link className="text-[#24A0ED] hover:text-gray-600" href={`/clients/${client.id}`}><FaEye size={24}/></Link>
                 </td>
               </tr>
             ))}
@@ -202,7 +198,6 @@ const ClientsPage = () => {
           Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, data?.data.pagination.total || 0)} of {data?.data.pagination.total || 0} entries
         </div>
         <div className="flex gap-2">
-          {/* Previous Page Button */}
           <button
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
@@ -210,8 +205,6 @@ const ClientsPage = () => {
           >
             Previous
           </button>
-
-          {/* Next Page Button */}
           <button
             onClick={() => setPage(p => p + 1)}
             disabled={page * limit >= (data?.data.pagination.total || 0)}

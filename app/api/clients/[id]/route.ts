@@ -4,7 +4,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
-import { validateClientData } from '@/lib/validators';
+import { validateCreateClientData } from '@/lib/validators';
 
 export async function GET(
   request: NextRequest,
@@ -90,15 +90,17 @@ export async function PATCH(
 
     const data = await request.json();
     
-    // Validate client data
-    const validationResult = validateClientData(data, true);
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { error: validationResult.error },
-        { status: 400 }
-      );
-    }
+    // console.log("Before validation: ", data);
+    // // Validate client data
+    // const validationResult = validateCreateClientData(data, true);
+    // if (!validationResult.success) {
+    //   return NextResponse.json(
+    //     { error: validationResult.error },
+    //     { status: 400 }
+    //   );
+    // }
 
+    // console.log("After Validation: ", data);
     // Get current client data for comparison
     const currentClient = await prisma.client.findUnique({
       where: {
@@ -118,6 +120,7 @@ export async function PATCH(
       );
     }
 
+    // console.log("Current client: ", currentClient);
     // Track changes for activity log
     const changes: Record<string, { from: any; to: any }> = {};
     if (data.status && data.status !== currentClient.status) {

@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import {generateCaseNumber} from '@/lib/utils';
 import { auth } from '@/lib/auth';
 import { CaseStatus, Prisma } from '@prisma/client';
+import { validateCaseData } from '@/lib/validators';
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,27 +21,65 @@ export async function POST(request: NextRequest) {
     if(session.user.organizationId === null){
         throw new Error("organizationId cannot be null");
     }
+
+    const data = await request.json();
+
+    const { success, error } = validateCaseData(data);
+        
+    if (!success) {
+      return NextResponse.json(
+        { error: error },
+        { status: 400 }
+      );
+    }
+
     const {
+      clientId,
       title,
       description,
-      status = 'ACTIVE',
-      assignedToId,
-      dueDate,
-      clientId,
-      startDate
-    } = await request.json();
+      caseType,
+      caseSubType,
+      stageOfCase,
+      filingNumber,
+      filingDate,
+      act,
+      firstHearingDate,
+      policeStation,
+      firNumber,
+      firDate,
+      status,
+      priority,
+      startDate,
+      endDate,
+      courts,
+      assignedToId
+    } = data;
 
     const case_ = await prisma.case.create({
       data: {
         title,
         description,
+        caseType,
+        caseSubType,
+        stageOfCase,
+        filingNumber,
+        filingDate: new Date(filingDate),
+        act,
+        firstHearingDate: new Date(firstHearingDate),
+        policeStation,
+        firNumber,
+        firDate: new Date(firDate),
         status,
-        endDate: dueDate ? new Date(dueDate) : null,
+        priority,
+        endDate: endDate ? new Date(endDate) : null,
         organizationId: session.user.organizationId,
         lawyerId: assignedToId,
         caseNumber: await generateCaseNumber(session.user.organizationId),
         clientId: clientId,                 
-        startDate: startDate || new Date(),
+        startDate: new Date(startDate) || new Date(),
+        courts: {
+          create: courts
+        }
       },
       include: {
         lawyer: {
@@ -50,6 +89,7 @@ export async function POST(request: NextRequest) {
             name: true
           }
         },
+        courts: true
         
       }
     });
@@ -58,7 +98,7 @@ export async function POST(request: NextRequest) {
     
   } catch (error) {
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: `Internal server error ${error}` },
       { status: 500 }
     );
   }

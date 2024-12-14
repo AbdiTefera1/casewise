@@ -1,31 +1,43 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod';
 import { prisma } from './prisma';
-import { NotificationType, NotificationPriority } from '@prisma/client';
+import { NotificationType, NotificationPriority, CompanyType, Gender, ClientStatus } from '@prisma/client';
 
-// Client Validator
-const clientSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email address'),
-  phone: z.string().optional(),
-  address: z.object({
-    street: z.string().optional(),
-    city: z.string().optional(),
-    state: z.string().optional(),
-    postalCode: z.string().optional(),
-    country: z.string().optional()
-  }).optional(),
-  type: z.enum(['INDIVIDUAL', 'COMPANY']),
-  status: z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED']).optional(),
-  companyName: z.string().optional(),
-  industry: z.string().optional(),
-  website: z.string().url().optional().nullable(),
-  notes: z.string().optional(),
-  customFields: z.record(z.any()).optional()
+// Define Zod schemas for nested objects
+const AddressSchema = z.object({
+  street: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  country: z.string().optional(),
+  postalCode: z.string().optional(),
 });
 
-export function validateClientData(data: any, isUpdate = false) {
-  const schema = isUpdate ? clientSchema.partial() : clientSchema;
+const ContactInfoSchema = z.object({
+  phone: z.string().optional(),
+  address: AddressSchema.optional(),
+  alternateEmail: z.string().email().optional(),
+});
+
+// Define the main schema for CreateClientData
+const CreateClientDataSchema = z.object({
+  firstName: z.string(),
+  middleName: z.string(),
+  lastName: z.string().optional(),
+  email: z.string().email().optional(),
+  type: z.nativeEnum(CompanyType).optional(),
+  gender: z.nativeEnum(Gender).optional(),
+  contactInfo: ContactInfoSchema.optional(),
+  companyName: z.string().optional(),
+  industry: z.string().optional(),
+  website: z.string().url().optional(),
+  notes: z.string().optional(),
+  customFields: z.string().optional(),
+  status: z.nativeEnum(ClientStatus).optional(),
+});
+
+// Example usage
+export function validateCreateClientData(data: any, isUpdate = false) {
+  const schema = isUpdate ? CreateClientDataSchema.partial() : CreateClientDataSchema;
   const result = schema.safeParse(data);
   
   return {
@@ -34,59 +46,112 @@ export function validateClientData(data: any, isUpdate = false) {
   };
 }
 
+// Case validation
+// Define the court info schema
+const CourtSchema = z.object({
+  courtNo: z.string(), // Court number
+  courtType: z.string(), // Type of court (e.g., District, High)
+  court: z.string(), // Name of the court
+  judgeType: z.string(), // Type of judge (e.g., Presiding Judge)
+  judgeName: z.string(), // Name of the judge
+  remarks: z.string().optional() // Remarks are optional
+});
+
+// Define the main Theft Case schema for validation
+const caseSchema = z.object({
+  title: z.string(), // Title of the case
+  description: z.string(), // Description of the case
+  clientId: z.string().uuid(), // Client ID must be a valid UUID
+  caseType: z.string(), // Type of case (e.g., Criminal)
+  caseSubType: z.string(), // Subtype of case (e.g., Theft)
+  stageOfCase: z.string(), // Current stage of the case (e.g., Investigation)
+  filingNumber: z.string(), // Filing number for the case
+  filingDate: z.string().refine(date => !isNaN(Date.parse(date)), {
+    message: "Invalid filing date format" // Validate date format
+  }),
+  act: z.string(), // Legal act related to the case
+  firstHearingDate: z.string().refine(date => !isNaN(Date.parse(date)), {
+    message: "Invalid first hearing date format" // Validate date format
+  }),
+  policeStation: z.string(), // Name of the police station involved
+  firNumber: z.string(), // FIR number related to the case
+  firDate: z.string().refine(date => !isNaN(Date.parse(date)), {
+    message: "Invalid FIR date format" // Validate date format
+  }),
+  status: z.enum(['ACTIVE', 'INACTIVE', 'CLOSED']), // Status of the case
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH']), // Priority level of the case
+  startDate: z.string().refine(date => !isNaN(Date.parse(date)), {
+    message: "Invalid start date format" // Validate date format
+  }),
+  endDate: z.string().nullable().refine(date => date === null || !isNaN(Date.parse(date)), {
+    message: "Invalid end date format or should be null" // Validate date format or null
+  }),
+  courts: z.array(CourtSchema), // Array of court objects
+  assignedToId: z.string().uuid() // Assigned lawyer ID must be a valid UUID
+});
+
+// Function to validate theft case data
+export function validateCaseData(data: any) {
+  const result = caseSchema.safeParse(data);
+  
+  return {
+    success: result.success,
+    error: result.success ? null : result.error.errors.map(err => err.message)
+  };
+}
+
 // Lawyer validator
-const contactInfoSchema = z.object({
-    phone: z.string().optional(),
-    mobile: z.string().optional(),
-    address: z.object({
-      street: z.string().optional(),
-      city: z.string().optional(),
-      state: z.string().optional(),
-      postalCode: z.string().optional(),
-      country: z.string().optional()
-    }).optional(),
-    emergencyContact: z.object({
-      name: z.string().optional(),
-      relationship: z.string().optional(),
-      phone: z.string().optional()
-    }).optional()
-  }).strict();
+// Define the contact info schema
+const LawyerContactInfoSchema = z.object({
+  email: z.string().email(), // Email must be a valid email format
+  phone: z.string().optional(), // Phone is optional
+  address: z.object({
+    street: z.string(),
+    city: z.string(),
+    state: z.string(),
+    zipCode: z.string().length(5) // Assuming US zip code format
+  }).optional() // Address is optional
+});
+
+// Define the availability schema
+const AvailabilitySchema = z.object({
+  daysAvailable: z.array(z.string()), // Array of available days
+  hoursAvailable: z.object({
+    from: z.string().regex(/^\d{2}:\d{2}$/), // Time format HH:mm
+    to: z.string().regex(/^\d{2}:\d{2}$/) // Time format HH:mm
+  })
+});
+
+// Define the jurisdictions schema
+const JurisdictionsSchema = z.object({
+  regions: z.array(z.string()), // Array of regions (e.g., states)
+  countries: z.array(z.string()) // Array of countries
+});
+
+// Define the main Lawyer schema for registration
+const lawyerRegistrationSchema = z.object({
+  email: z.string().email(), // Valid email format
+  password: z.string().min(8), // Password must be at least 8 characters long
+  name: z.string(), // Lawyer's full name
+  specializations: z.array(z.string()), // Array of specializations
+  barNumber: z.string(), // Bar association number
+  licenseStatus: z.enum(['Active', 'Inactive']), // Enum for license status
+  jurisdictions: JurisdictionsSchema, // Jurisdictions object
+  hourlyRate: z.number().positive(), // Positive float for hourly rate
+  contactInfo: LawyerContactInfoSchema, // Contact info object
+  availability: AvailabilitySchema // Availability object
+});
+
+// Function to validate lawyer registration data
+export function validateLawyerRegistrationData(data: any) {
+  const result = lawyerRegistrationSchema.safeParse(data);
   
-  const availabilitySchema = z.object({
-    schedule: z.array(z.object({
-      day: z.enum(['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']),
-      startTime: z.string(),
-      endTime: z.string()
-    })).optional(),
-    vacations: z.array(z.object({
-      startDate: z.string(),
-      endDate: z.string(),
-      note: z.string().optional()
-    })).optional()
-  }).strict();
-  
-  const lawyerSchema = z.object({
-    email: z.string().email('Invalid email address'),
-    password: z.string().min(8).optional(),
-    name: z.string().min(1, 'Name is required'),
-    specializations: z.array(z.string()),
-    barNumber: z.string(),
-    licenseStatus: z.string(),
-    jurisdictions: z.array(z.string()),
-    hourlyRate: z.number().positive(),
-    contactInfo: contactInfoSchema,
-    availability: availabilitySchema
-  });
-  
-  export function validateLawyerData(data: any, isUpdate = false) {
-    const schema = isUpdate ? lawyerSchema.partial() : lawyerSchema;
-    const result = schema.safeParse(data);
-    
-    return {
-      success: result.success,
-      error: result.success ? null : result.error.errors[0].message
-    };
-  }
+  return {
+    success: result.success,
+    error: result.success ? null : result.error.errors.map(err => err.message)
+  };
+}
+
 
   // Task Validator
   const taskSchema = z.object({

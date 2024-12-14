@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
-import { validateLawyerData } from '@/lib/validators';
+import { validateLawyerRegistrationData } from '@/lib/validators';
 import { hashPassword } from '@/lib/auth';
 import { Prisma } from '@prisma/client';
 
@@ -19,15 +19,17 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await request.json();
-    
-    const validationResult = validateLawyerData(data);
+    // console.log("Before Validation!")
+    const validationResult = validateLawyerRegistrationData(data);
     if (!validationResult.success) {
       return NextResponse.json(
         { error: validationResult.error },
         { status: 400 }
       );
     }
+    // console.log("After validation!")
 
+    
     const {
       email,
       password,
@@ -51,7 +53,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
+    
     const hashedPassword = await hashPassword(password);
 
     const lawyer = await prisma.user.create({
@@ -87,7 +89,7 @@ export async function POST(request: NextRequest) {
     
   } catch (error) {
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: `Internal server error ${error}` },
       { status: 500 }
     );
   }
@@ -124,9 +126,10 @@ export async function GET(request: NextRequest) {
         { lawyer: { barNumber: { contains: search, mode: 'insensitive' } } }
       ] : undefined,
       lawyer: {
-        specializations: specialization ? { has: specialization } : undefined,
+        specializations: specialization ? { array_contains: [specialization] } : undefined,
         status: status || undefined,
-        jurisdictions: jurisdiction ? { has: jurisdiction } : undefined
+        jurisdictions: jurisdiction ? { array_contains: [jurisdiction] } : undefined
+        // jurisdictions: jurisdiction ? { has: jurisdiction } : undefined
       }
     };
 

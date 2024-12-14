@@ -36,8 +36,8 @@ export interface Client {
   id: string;
   organizationId: string;
   firstName: string;
-      middleName: string;
-      lastName?: string;
+  middleName: string;
+  lastName?: string;
   email?: string;
   type?: CompanyType;
   contactInfo?: ContactInfo;
@@ -66,8 +66,8 @@ export interface ClientListResponse {
 
 export interface CreateClientData {
   firstName: string;
-      middleName: string;
-      lastName?: string;
+  middleName: string;
+  lastName?: string;
   email?: string;
   type?: CompanyType;
   gender?: Gender; 
@@ -80,7 +80,24 @@ export interface CreateClientData {
   status?: ClientStatus;
 }
 
-type UpdateClientData = Partial<CreateClientData>;
+// type UpdateClientData = Partial<CreateClientData>;
+
+export interface UpdateClientData {
+  firstName: string;
+  middleName: string;
+  lastName?: string;
+  email?: string;
+  type?: CompanyType;
+  gender?: Gender; 
+  contactInfo?: ContactInfo;
+  clientNumber: string;
+  companyName?: string;
+  industry?: string;
+  website?: string;
+  notes?: string;
+  customFields?: string;
+  status?: ClientStatus;
+}
 
 // API endpoints
 const CLIENTS_ENDPOINT = '/clients';

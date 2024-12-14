@@ -7,7 +7,7 @@ const API_BASE_URL = process.env.NODE_ENV === 'production'
   : 'http://localhost:3000/api';
 // Create an axios instance with default configurations
 const api = axios.create({
-  baseURL: API_BASE_URL, // Base API URL
+  baseURL: "http://localhost:3000/api", // Base API URL
   // timeout: 10000, // Increased timeout to 10 seconds
   withCredentials: true, // Include cookies in requests
 });

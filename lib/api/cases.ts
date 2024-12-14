@@ -37,7 +37,7 @@ export interface Case {
   // Relations
   client?: {
     id: string;
-    name: string;
+    firstName: string;
     email: string;
   };
   lawyer: {
@@ -45,17 +45,87 @@ export interface Case {
     name: string;
     email: string;
   };
+  court: {
+    id: string;
+    courtNo: string;
+    courtType: string;
+    court: string;
+    judgeType: string;
+    judgeName: string;
+    remarks: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
 }
 
-interface CreateCaseData {
-  clientId?: string;
-  lawyerId: string;
+export interface Court {
+  courtNo: string;
+  courtType: string;
+  court: string;
+  judgeType: string;
+  judgeName: string;
+  remarks: string;
+}
+
+export interface CaseFormData {
   title: string;
   description: string;
-  status: CaseStatus;
-  caseNumber: string;
-  startDate?: Date;
+  clientId: string;
+  caseType: string;
+  caseSubType: string;
+  stageOfCase: string;
+  filingNumber: string;
+  filingDate: string;
+  act: string;
+  firstHearingDate: string;
+  policeStation: string;
+  firNumber: string;
+  firDate: string;
+  status: 'ACTIVE' | 'PENDING' | 'CLOSED';
+  priority: 'HIGH' | 'MEDIUM' | 'LOW';
+  startDate: string;
+  endDate?: string | null;
+  courts: Court[];
+  assignedToId: string;
 }
+
+// export interface CreateCaseData {
+//   // Client Details
+//   clientId?: string;
+
+//   // Lawyer Details
+//   lawyerId?: string;
+
+//   // Case Details
+//   title: string;
+//   description: string;
+//   caseType: string;
+//   caseSubType: string;
+//   stageOfCase: string;
+//   filingNumber: string;
+//   filingDate: Date;
+//   act: string;
+//   firstHearingDate?: Date;
+//   nextHearingDate?: Date;
+//   policeStation: string;
+//   firNumber: string;
+//   firDate: Date;
+//   status: CaseStatus;
+//   priority?: CasePriority;
+//   caseNumber: string;
+//   startDate?: Date;
+//   endDate?: Date;
+
+//   // Court Details (Many-to-Many Relationship)
+//   court: {
+//     courtNo: string;
+//     courtType: string;
+//     court: string;
+//     judgeType: string;
+//     judgeName: string;
+//     remarks: string;
+//   }[];
+// }
 
 interface UpdateCaseData {
   clientId?: string;
@@ -83,7 +153,7 @@ const CASES_ENDPOINT = '/cases';
 
 // API functions
 export const casesApi = {
-  create: (data: CreateCaseData) => 
+  create: (data: CaseFormData) => 
     api.post<Case>(CASES_ENDPOINT, data),
 
   getAll: async (params?: Record<string, any>): Promise<CaseListResponse> => {

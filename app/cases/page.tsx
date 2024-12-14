@@ -4,6 +4,7 @@
 import { useMemo, useState } from 'react';
 import { useCases } from '@/hooks/useCases';
 import { CaseStatus, CasePriority } from '@/lib/api/cases';
+import Link from 'next/link';
 
 type TabType = 'ALL' | 'IMPORTANT' | 'ARCHIVED';
 
@@ -103,6 +104,8 @@ const CasesPage = () => {
     }
   };
 
+  
+
   const getPriorityBadgeColor = (priority: CasePriority) => {
     switch (priority) {
       case 'URGENT':
@@ -135,9 +138,9 @@ const CasesPage = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl text-gray-700">Cases</h1>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+        <Link href='/cases/add' className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
           + Add Case
-        </button>
+        </Link>
       </div>
 
       {/* Date Filter Section */}

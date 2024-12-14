@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
-import { validateClientData } from '@/lib/validators';
+import { validateCreateClientData } from '@/lib/validators';
 import { generateClientNumber } from '@/lib/utils'
 import { Prisma, ClientStatus, CompanyType } from '@prisma/client';
 
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const data = await request.json();
 
     // Validate client data
-    const validationResult = validateClientData(data);
+    const validationResult = validateCreateClientData(data);
     if (!validationResult.success) {
       return NextResponse.json(
         { error: validationResult.error },
@@ -37,10 +37,12 @@ export async function POST(request: NextRequest) {
       firstName,
       middleName,
       lastName,
+      email,
       contactInfo,
       type,
-      status = 'ACTIVE',
+      status,
       companyName,
+      gender,
       industry,
       website,
       notes,
@@ -50,9 +52,11 @@ export async function POST(request: NextRequest) {
     const client = await prisma.client.create({
       data: {
         firstName,
-      middleName,
-      lastName,
+        middleName,
+        lastName,
+        email,
         type,
+        gender,
         companyName,
         contactInfo,
         industry,
@@ -136,7 +140,7 @@ export async function GET(request: NextRequest) {
         { clientNumber: { contains: search, mode: 'insensitive' } }
       ] : undefined,
       type: type as CompanyType || undefined,
-      status: status as ClientStatus || "ACTIVE",
+      status: status as ClientStatus || undefined,
       industry: industry || undefined
     };
 

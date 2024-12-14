@@ -34,3 +34,30 @@ body {
 }
 
 
+/* Toggle Switch Container */
+.toggle-checkbox {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1.5rem; /* 24px */
+  height: 1.5rem; /* 24px */
+  border-radius: 9999px; /* Fully rounded */
+  background-color: white;
+  border: 4px solid #d1d5db; /* Light gray border */
+  appearance: none; /* Remove default checkbox styles */
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Checked State */
+.toggle-checkbox:checked {
+  left: 1.5rem; /* Move the toggle to the right */
+  border-color: #34d399; /* Green border when checked */
+  background-color: #34d399; /* Green background when checked */
+}
+
+/* Disabled State */
+.toggle-checkbox:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
