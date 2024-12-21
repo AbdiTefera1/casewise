@@ -113,6 +113,8 @@ export async function GET(request: NextRequest) {
     const specialization = searchParams.get('specialization');
     const status = searchParams.get('status');
     const jurisdiction = searchParams.get('jurisdiction');
+    const sortBy = searchParams.get('sortBy') || 'createdAt';
+    const sortOrder = searchParams.get('sortOrder') || 'desc';
 
     const skip = (page - 1) * limit;
 
@@ -138,7 +140,9 @@ export async function GET(request: NextRequest) {
         where,
         skip,
         take: limit,
-        orderBy: { name: 'asc' },
+        orderBy: {
+          [sortBy]: sortOrder
+        },
         include: {
           lawyer: true,
           _count: {

@@ -132,8 +132,8 @@ export default function AddCasePage() {
                   className="form-select w-full"
                 >
                   <option value="ACTIVE">Active</option>
-                  <option value="PENDING">Pending</option>
-                  <option value="CLOSED">Closed</option>
+                  <option value="INACTIVE">InActive</option>
+                  <option value="ARCHIVED">Archived</option>
                 </select>
               </div>
   
@@ -145,7 +145,8 @@ export default function AddCasePage() {
                 >
                   <option value="HIGH">High</option>
                   <option value="MEDIUM">Medium</option>
-                  <option value="LOW">Low</option>
+                  <option value="URGENT">URGENT</option>
+                  <option value="Low">Low</option>
                 </select>
               </div>
   

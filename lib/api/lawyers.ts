@@ -1,32 +1,35 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // lib/api/lawyers.ts
 import api from './config';
 
 export interface LawyerCreateData {
-  email: string;
-  password: string;
-  name: string;
-  specializations: string[];
-  barNumber: string;
-  licenseStatus: string;
-  jurisdictions: string[];
-  hourlyRate: number;
+  email: string; 
+  password: string; 
+  name: string; 
+  specializations: string[]; 
+  barNumber: string; 
+  licenseStatus: 'Active' | 'Inactive'; 
+  jurisdictions: {
+    regions: string[]; 
+    countries: string[]; 
+  };
+  hourlyRate: number; 
   contactInfo: {
-    phone: string;
-    address: string;
-    city: string;
-    state: string;
-    zipCode: string;
+    email: string; 
+    phone?: string; 
+    address: {
+      street: string; 
+      city: string; 
+      state: string; 
+      zipCode: string; 
+    };
   };
   availability: {
-    workDays: string[];
-    workHours: {
-      start: string;
-      end: string;
+    daysAvailable: string[]; 
+    hoursAvailable: {
+      from: string; 
+      to: string; 
     };
-    exceptions?: {
-      date: string;
-      available: boolean;
-    }[];
   };
 }
 
@@ -36,11 +39,11 @@ export interface Lawyer {
   name: string;
   email: string;
   role: 'LAWYER';
-  avator: string | null; // Assuming this is a typo and should be 'avatar'
+  avatar: string | null; // Corrected from 'avator' to 'avatar'
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
   deletedAt?: string | null; // Optional field
-  lawyerDetails: {
+  lawyer: { // Changed from 'lawyerDetails' to 'lawyer'
       id: string;
       userId: string;
       specializations: string[];
@@ -75,6 +78,16 @@ export interface Lawyer {
   };
 }
 
+interface LawyerListResponse {
+  lawyers: Lawyer[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+};
+
 const LAWYERS_ENDPOINT = '/lawyers';
 
 export const lawyerApi = {
@@ -83,19 +96,8 @@ export const lawyerApi = {
     return response;
   },
 
-  getLawyers: async (params?: {
-    page?: number;
-    limit?: number;
-    organizationId?: string;
-    specialization?: string;
-    status?: string;
-  }) => {
-    const { data } = await api.get<{
-      lawyers: Lawyer[];
-      total: number;
-      page: number;
-      limit: number;
-    }>(LAWYERS_ENDPOINT, { params });
+  getLawyers: async (params?: Record<string, any>): Promise<LawyerListResponse> => {
+    const { data } = await api.get<LawyerListResponse>(LAWYERS_ENDPOINT, { params });
     return data;
   },
 

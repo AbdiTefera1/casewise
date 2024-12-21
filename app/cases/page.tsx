@@ -3,7 +3,7 @@
 
 import { useMemo, useState } from 'react';
 import { useCases } from '@/hooks/useCases';
-import { CaseStatus, CasePriority } from '@/lib/api/cases';
+import { CaseStatus, CasePriority, Case } from '@/lib/api/cases';
 import Link from 'next/link';
 
 type TabType = 'ALL' | 'IMPORTANT' | 'ARCHIVED';
@@ -22,7 +22,7 @@ const CasesPage = () => {
 
   const isImportantCase = (status: CaseStatus, priority: CasePriority) => {
     return (
-      (status === 'ACTIVE' || status === 'PENDING') &&
+      (status === 'ACTIVE' || status === 'INACTIVE') &&
       (priority === 'URGENT' || priority === 'HIGH')
     );
   };
@@ -61,9 +61,10 @@ const CasesPage = () => {
   };
 
   const { data, isLoading } = useCases(getQueryParams());
+  // console.log(data)
 
   const { cases = [], pagination } = data || { cases: [], pagination: { total: 0, pages: 0 } };
-
+  console.log(cases)
   // Filter important cases on the frontend when needed
   const filteredCases = useMemo(() => {
     if (!cases) return [];
@@ -125,7 +126,7 @@ const CasesPage = () => {
     switch (status) {
       case 'ACTIVE':
         return 'bg-blue-100 text-blue-800';
-      case 'PENDING':
+      case 'INACTIVE':
         return 'bg-purple-100 text-purple-800';
       case 'ARCHIVED':
         return 'bg-gray-100 text-gray-800';
@@ -231,12 +232,14 @@ const CasesPage = () => {
         </div>
 
         {/* Cases Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <div className="overflow-x-auto border rounded">
+          <table className="w-full border-collapse">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-4 py-2 text-left text-sm text-gray-500 cursor-pointer"
                   onClick={() => handleSort('id')}>No</th>
+                  <th className="px-4 py-2 text-left text-sm text-gray-500 cursor-pointer"
+                  onClick={() => handleSort('id')}>Filing Number</th>
                 <th className="px-4 py-2 text-left text-sm text-gray-500 cursor-pointer"
                   onClick={() => handleSort('title')}>Client & Case Detail</th>
                 <th className="px-4 py-2 text-left text-sm text-gray-500">Court Detail</th>
@@ -253,27 +256,28 @@ const CasesPage = () => {
                 <tr>
                   <td colSpan={8} className="text-center py-4">Loading...</td>
                 </tr>
-              ) : filteredCases.map((caseItem) => (
+              ) : filteredCases.map((caseItem, idx) => (
                 <tr key={caseItem.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-2">{caseItem.id}</td>
+                  <td className="px-4 py-2">{idx + 1}</td>
+                  <td className="px-4 py-2">{caseItem.filingNumber}</td>
                   <td className="px-4 py-2">
                     <div className="flex items-center gap-2">
                       {isImportantCase(caseItem.status, caseItem.priority) && (
                         <span className="text-yellow-500">★</span>
                       )}
                       <div>
-                        <div className="font-medium">{caseItem.title}</div>
+                        <div className="font-medium">Case: {caseItem.title}</div>
                         <div className="text-sm text-gray-500">
-                          Client: {caseItem.clientId}
+                          Client: {caseItem.client?.firstName}
                         </div>
                       </div>
                     </div>
                   </td>
                   <td className="px-4 py-2">
-                    {/* Add court details */}
+                    <ul>{caseItem.courts.map(item => (<li key={item.id}>{item.court}</li>))}</ul>
                   </td>
                   <td className="px-4 py-2">
-                    {/* Add petitioner/respondent details */}
+                    {caseItem.lawyer.name}
                   </td>
                   <td className="px-4 py-2">
                     {caseItem.endDate && new Date(caseItem.endDate).toLocaleDateString()}
@@ -305,33 +309,20 @@ const CasesPage = () => {
             Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, pagination.total)} of {pagination.total} entries
           </div>
           <div className="flex gap-2">
-            <button
-              onClick={() => setPage(page - 1)}
-              disabled={page === 1}
-              className="px-3 py-1 border rounded disabled:opacity-50"
-            >
+            <button onClick={() => setPage(page - 1)} disabled={page === 1} className="px-3 py-1 border rounded disabled:opacity-50">
               Previous
             </button>
-            {Array.from({ length: pagination.page || 0 }, (_, i) => (
-              <button
-                key={i + 1}
-                onClick={() => setPage(i + 1)}
-                className={`px-3 py-1 border rounded ${page === i + 1 ? 'bg-blue-500 text-white' : ''
-                  }`}
-              >
+            {Array.from({ length: pagination.pages }, (_, i) => (
+              <button key={i + 1} onClick={() => setPage(i + 1)} className={`px-3 py-1 border rounded ${page === i + 1 ? 'bg-blue-500 text-white' : ''}`}>
                 {i + 1}
               </button>
             ))}
-
-            <button
-              onClick={() => setPage(page + 1)}
-              disabled={page === pagination.page}
-              className="px-3 py-1 border rounded disabled:opacity-50"
-            >
+            <button onClick={() => setPage(page + 1)} disabled={page === pagination.pages} className="px-3 py-1 border rounded disabled:opacity-50">
               Next
             </button>
           </div>
         </div>
+
       </div>
     </div>
   );

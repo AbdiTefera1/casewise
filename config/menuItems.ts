@@ -55,7 +55,7 @@ export const MENU_ITEMS: MenuItem[] = [
     id: 'appointment',
     icon: FaCalendar,
     label: 'Appointment',
-    href: '/appointment',
+    href: '/appointments',
     roles: [UserRole.ADMIN, UserRole.LAWYER, UserRole.PARALEGAL]
   },
   {

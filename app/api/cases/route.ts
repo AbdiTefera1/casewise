@@ -2,7 +2,7 @@
 // app/api/cases/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import {generateCaseNumber} from '@/lib/utils';
+import { generateCaseNumber } from '@/lib/utils';
 import { auth } from '@/lib/auth';
 import { CaseStatus, Prisma } from '@prisma/client';
 import { validateCaseData } from '@/lib/validators';
@@ -18,21 +18,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if(session.user.organizationId === null){
-        throw new Error("organizationId cannot be null");
+    if (session.user.organizationId === null) {
+      throw new Error("organizationId cannot be null");
     }
 
     const data = await request.json();
-
+    
+    console.log("Before validation!");
     const { success, error } = validateCaseData(data);
-        
+    
     if (!success) {
       return NextResponse.json(
         { error: error },
         { status: 400 }
       );
     }
-
+    
+    console.log("After validation!");
     const {
       clientId,
       title,
@@ -90,11 +92,10 @@ export async function POST(request: NextRequest) {
           }
         },
         courts: true
-        
       }
     });
 
-    return NextResponse.json({ case: case_ }, { status: 201 });
+    return NextResponse.json({ case: case_, message: 'Case created successfully!' }, { status: 201 });
     
   } catch (error) {
     return NextResponse.json(
@@ -115,8 +116,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    if(session.user.organizationId === null){
-        throw new Error("organizationId cannot be null");
+    if (session.user.organizationId === null) {
+      throw new Error("organizationId cannot be null");
     }
 
     const { searchParams } = new URL(request.url);
@@ -127,33 +128,34 @@ export async function GET(request: NextRequest) {
     const assignedToId = searchParams.get('assignedToId');
     const fromDate = searchParams.get('fromDate');
     const toDate = searchParams.get('toDate');
+    const sortBy = searchParams.get('sortBy') || 'createdAt';
+    const sortOrder = searchParams.get('sortOrder') || 'desc';
 
     const skip = (page - 1) * limit;
 
-
     const where: Prisma.CaseWhereInput = {
-        organizationId: session.user.organizationId,
-        deletedAt: null,
-        OR: search ? [
-          { title: { contains: search, mode: 'insensitive' as const } },
-          { description: { contains: search, mode: 'insensitive' as const } },
-          { caseNumber: { contains: search, mode: 'insensitive' as const } }
-        ] : undefined,
-        status: status as CaseStatus || undefined,
-        lawyerId: assignedToId || undefined,
-        createdAt: {
-          gte: fromDate ? new Date(fromDate) : undefined,
-          lte: toDate ? new Date(toDate) : undefined
-        }
-      };
-      
+      organizationId: session.user.organizationId,
+      deletedAt: null,
+      OR: search ? [
+        { title: { contains: search, mode: 'insensitive' as const } },
+        { description: { contains: search, mode: 'insensitive' as const } },
+        { filingNumber: { contains: search, mode: 'insensitive' as const } },
+        { caseNumber: { contains: search, mode: 'insensitive' as const } }
+      ] : undefined,
+      status: status as CaseStatus || undefined,
+      lawyerId: assignedToId || undefined,
+      createdAt: {
+        gte: fromDate ? new Date(fromDate) : undefined,
+        lte: toDate ? new Date(toDate) : undefined
+      }
+    };
 
     const [cases, total] = await Promise.all([
       prisma.case.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { [sortBy]: sortOrder },
         include: {
           lawyer: {
             select: {
@@ -162,16 +164,18 @@ export async function GET(request: NextRequest) {
               name: true
             }
           },
+          courts: true,
+          client: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true
+            }
+          }
         }
       }),
       prisma.case.count({ where })
     ]);
-
-    if(total === 0){
-      console.log("no cases")
-    }else{
-      console.log("something went wrong")
-    }
 
     return NextResponse.json({
       cases,
@@ -180,7 +184,8 @@ export async function GET(request: NextRequest) {
         page,
         limit,
         totalPages: Math.ceil(total / limit)
-      }
+      },
+      message: total > 0 ? "Cases retrieved successfully!" : "No cases found."
     });
     
   } catch (error) {

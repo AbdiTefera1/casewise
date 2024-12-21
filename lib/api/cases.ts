@@ -6,8 +6,7 @@ import api from '@/lib/api/config';
 // Types
 export enum CaseStatus {
   ACTIVE = 'ACTIVE',
-  PENDING = 'PENDING',
-  CLOSED = 'CLOSED',
+  INACTIVE = 'INACTIVE',
   ARCHIVED = 'ARCHIVED'
 }
 
@@ -45,7 +44,7 @@ export interface Case {
     name: string;
     email: string;
   };
-  court: {
+  courts: {
     id: string;
     courtNo: string;
     courtType: string;
@@ -81,51 +80,13 @@ export interface CaseFormData {
   policeStation: string;
   firNumber: string;
   firDate: string;
-  status: 'ACTIVE' | 'PENDING' | 'CLOSED';
-  priority: 'HIGH' | 'MEDIUM' | 'LOW';
+  status: 'ACTIVE' | 'PENDING' | 'ARCHIVED';
+  priority: 'HIGH' | 'MEDIUM' | 'LOW' | 'URGENT';
   startDate: string;
   endDate?: string | null;
   courts: Court[];
   assignedToId: string;
 }
-
-// export interface CreateCaseData {
-//   // Client Details
-//   clientId?: string;
-
-//   // Lawyer Details
-//   lawyerId?: string;
-
-//   // Case Details
-//   title: string;
-//   description: string;
-//   caseType: string;
-//   caseSubType: string;
-//   stageOfCase: string;
-//   filingNumber: string;
-//   filingDate: Date;
-//   act: string;
-//   firstHearingDate?: Date;
-//   nextHearingDate?: Date;
-//   policeStation: string;
-//   firNumber: string;
-//   firDate: Date;
-//   status: CaseStatus;
-//   priority?: CasePriority;
-//   caseNumber: string;
-//   startDate?: Date;
-//   endDate?: Date;
-
-//   // Court Details (Many-to-Many Relationship)
-//   court: {
-//     courtNo: string;
-//     courtType: string;
-//     court: string;
-//     judgeType: string;
-//     judgeName: string;
-//     remarks: string;
-//   }[];
-// }
 
 interface UpdateCaseData {
   clientId?: string;

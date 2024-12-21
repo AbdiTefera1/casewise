@@ -27,7 +27,7 @@ export function useCreateLawyer() {
     mutationFn: lawyerApi.createLawyer,
     onSuccess: (newLawyer) => {
       queryClient.invalidateQueries({ queryKey: ['lawyers'] });
-      queryClient.setQueryData(['lawyers', newLawyer.id], newLawyer);
+      queryClient.setQueryData(['lawyers', newLawyer], newLawyer);
     },
   });
 }

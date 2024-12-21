@@ -28,7 +28,7 @@ export const Dashboard = () => {
   const stats = {
     totalCases: cases.length,
     archivedCases: cases.filter((c) => c.status === 'ARCHIVED').length,
-    importantCases: cases.filter((c) => c.priority === 'HIGH').length,
+    importantCases: cases.filter((c) => c.priority === 'HIGH' || c.priority === 'URGENT' || c.status === 'ACTIVE').length,
     totalClients: [...new Set(cases.map((c) => c.clientId))].length,
   };
 

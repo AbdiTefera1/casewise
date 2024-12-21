@@ -35,10 +35,10 @@ const CasesTable = ({ cases, userRole }: CasesTableProps) => (
       <tbody>
         {cases.map((case_) => (
           <tr key={case_.id} className="border-t">
-            <td className="py-3">{case_.id}</td>
+            <td className="py-3">{case_.caseNumber}</td>
             <td>{case_.title}</td>
-            <td>{case_.client?.name}</td>
-            <td>{case_.endDate?.getDate() + "/" + case_.endDate?.getMonth() + "/" + case_.endDate?.getFullYear()}</td>
+            <td>{case_.client?.firstName}</td>
+            <td>{case_.endDate ? (new Date(case_.endDate).getDate() + "-" + new Date(case_.endDate).getMonth() + "-" + new Date(case_.endDate).getFullYear()) : 'N/A'}</td>
             <td>{case_.status}</td>
             <td>
               <div className="flex gap-2">

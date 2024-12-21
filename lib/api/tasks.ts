@@ -4,13 +4,13 @@ import api from './config';
 export enum TaskPriority {
   HIGH = 'HIGH',
   MEDIUM = 'MEDIUM',
+  URGENT = 'URGENT',
   LOW = 'LOW'
 }
 
 export enum TaskStatus {
-  TODO = 'TODO',
+  NOT_STARTED = 'NOT_STARTED',
   IN_PROGRESS = 'IN_PROGRESS',
-  REVIEW = 'REVIEW',
   COMPLETED = 'COMPLETED'
 }
 
@@ -32,7 +32,8 @@ export interface Task {
   description: string;
   priority: TaskPriority;
   status: TaskStatus;
-  dueDate: Date;
+  startDate: Date;
+  deadline: Date;
   createdAt: Date;
   updatedAt: Date;
   case: {
@@ -43,6 +44,11 @@ export interface Task {
     id: string;
     name: string;
     email: string;
+  };
+  client: {
+      id: string;
+      firstName: string;
+      lastName: string;
   };
 }
 
@@ -68,6 +74,7 @@ export const taskApi = {
     page?: number;
     limit?: number;
     caseId?: string;
+    search?: string;
     assignedTo?: string;
     priority?: TaskPriority;
     status?: TaskStatus;

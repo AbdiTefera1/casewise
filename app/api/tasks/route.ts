@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await request.json();
-    
+
     const validationResult = validateTaskData(data);
     if (!validationResult.success) {
       return NextResponse.json(
@@ -31,6 +31,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const { 
+      title,
+      description,
+      priority,
+      status,
+      caseId,
+      assignedTo,
+      clientId,
+      startDate,
+      deadline
+    } = data;
     // Check if the case exists and user has access
     const case_ = await prisma.case.findFirst({
       where: {
@@ -49,8 +60,16 @@ export async function POST(request: NextRequest) {
 
     const task = await prisma.task.create({
       data: {
-        ...data,
-        userId: session.user.id
+        title,
+        description,
+        priority,
+        status,
+        caseId,
+        assignedTo,
+        clientId,
+        startDate,
+        deadline,
+        organizationId: session.user.organizationId
       },
       include: {
         assignee: {
@@ -65,6 +84,13 @@ export async function POST(request: NextRequest) {
             id: true,
             title: true,
             caseNumber: true
+          }
+        },
+        client: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true
           }
         }
       }
@@ -99,7 +125,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20');
     const search = searchParams.get('search') || '';
     const status = searchParams.get('status');
-    const dueDate = searchParams.get('dueDate');
+    const deadline = searchParams.get('deadline');
     const priority = searchParams.get('priority');
 
     const skip = (page - 1) * limit;
@@ -115,9 +141,9 @@ export async function GET(request: NextRequest) {
       ] : undefined,
       status: status as TaskStatus || undefined,
       priority: priority as TaskPriority || undefined,
-      dueDate: dueDate ? {
-        gte: new Date(dueDate),
-        lt: new Date(new Date(dueDate).setDate(new Date(dueDate).getDate() + 1))
+      deadline: deadline ? {
+        gte: new Date(deadline),
+        lt: new Date(new Date(deadline).setDate(new Date(deadline).getDate() + 1))
       } : undefined,
       assignedTo: session.user.role === 'LAWYER' ? session.user.id : undefined
     };
@@ -129,7 +155,7 @@ export async function GET(request: NextRequest) {
         take: limit,
         orderBy: [
           { priority: 'desc' },
-          { dueDate: 'asc' }
+          { deadline: 'asc' }
         ],
         include: {
           assignee: {
@@ -144,6 +170,13 @@ export async function GET(request: NextRequest) {
               id: true,
               title: true,
               caseNumber: true
+            }
+          },
+          client: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true
             }
           }
         }

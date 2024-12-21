@@ -78,8 +78,8 @@ const caseSchema = z.object({
   firDate: z.string().refine(date => !isNaN(Date.parse(date)), {
     message: "Invalid FIR date format" // Validate date format
   }),
-  status: z.enum(['ACTIVE', 'INACTIVE', 'CLOSED']), // Status of the case
-  priority: z.enum(['LOW', 'MEDIUM', 'HIGH']), // Priority level of the case
+  status: z.enum(['ACTIVE', 'INACTIVE', 'ARCHIVED']), // Status of the case
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']), // Priority level of the case
   startDate: z.string().refine(date => !isNaN(Date.parse(date)), {
     message: "Invalid start date format" // Validate date format
   }),
@@ -157,10 +157,13 @@ export function validateLawyerRegistrationData(data: any) {
   const taskSchema = z.object({
     title: z.string().min(1, 'Title is required'),
     description: z.string(),
-    priority: z.enum(['HIGH', 'MEDIUM', 'LOW', "URGENT"]),
-    status: z.enum(['NOT_STARTED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD']),
-    dueDate: z.string().transform(str => new Date(str)),
-    caseId: z.string().uuid('Invalid case ID')
+    priority: z.enum(['HIGH', 'MEDIUM', 'LOW', 'URGENT']),
+    status: z.enum(['NOT_STARTED', 'IN_PROGRESS', 'COMPLETED']),
+    caseId: z.string().uuid('Invalid case ID'),
+    assignedTo: z.string().uuid('Invalid assignee ID'),
+    clientId: z.string().uuid('Invalid client ID'),
+    startDate: z.string().transform(str => new Date(str)),
+    deadline: z.string().transform(str => new Date(str)),
   });
   
   export function validateTaskData(data: any, isUpdate = false) {
