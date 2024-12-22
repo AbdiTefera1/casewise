@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useTasks } from '@/hooks/useTasks';
 import { TaskPriority, TaskStatus } from '@/lib/api/tasks';
+import Link from 'next/link';
 
 export default function TaskListPage() {
   const [entriesPerPage, setEntriesPerPage] = useState(10); // Changed to number
@@ -42,14 +43,12 @@ export default function TaskListPage() {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl text-gray-700">Tasks</h1>
-        <button
+        <Link
           className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2"
-          onClick={() => {
-            /* Add task handler */
-          }}
+          href='/tasks/add'
         >
           <span>+</span> Add Task
-        </button>
+        </Link>
       </div>
 
       <div className="bg-white rounded-lg shadow">
@@ -86,9 +85,9 @@ export default function TaskListPage() {
               className="border rounded px-2 py-1"
             >
               <option value="">All Statuses</option>
-              <option value="Completed">Completed</option>
-              <option value="Not Started">Not Started</option>
-              <option value="In Progress">In Progress</option>
+              <option value="COMPLETED">Completed</option>
+              <option value="NOT_STARTED">Not Started</option>
+              <option value="IN_PROGRESS">In Progress</option>
             </select>
 
             <select
@@ -97,10 +96,10 @@ export default function TaskListPage() {
               className="border rounded px-2 py-1"
             >
               <option value="">All Priorities</option>
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-              <option value="urgent">Urgent</option>
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
+              <option value="URGENT">Urgent</option>
             </select>
 
             {/* Date Filter */}
@@ -178,33 +177,39 @@ export default function TaskListPage() {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const statusStyles = {
-    Completed: 'bg-green-100 text-green-800',
-    'Not Started': 'bg-blue-100 text-blue-800',
-    'In Progress': 'bg-cyan-100 text-cyan-800',
+  const statusStyles: Record<string, string> = {
+    COMPLETED: 'bg-green-100 text-green-800',
+    'NOT_STARTED': 'bg-blue-100 text-blue-800',
+    'IN_PROGRESS': 'bg-cyan-100 text-cyan-800',
   };
 
+  // Default style if status is not recognized
+  const defaultStyle = 'bg-gray-200 text-gray-600';
+
   return (
-    <span className={`px-2 py-1 rounded-full text-sm ${statusStyles[status] || ''}`}>
-      {status}
+    <span className={`px-2 py-1 rounded-full text-sm ${statusStyles[status] || defaultStyle}`}>
+      {status || 'Unknown'}
     </span>
   );
 }
 
 function PriorityBadge({ priority }: { priority: string }) {
-  const priorityStyles = {
-    low: 'bg-gray-100 text-gray-800',
-    medium: 'bg-blue-100 text-blue-800',
-    high: 'bg-orange-100 text-orange-800',
-    urgent: 'bg-red-100 text-red-800',
+  const priorityStyles: Record<string, string> = {
+    LOW: 'bg-gray-100 text-gray-800',
+    MEDIUM: 'bg-blue-100 text-blue-800',
+    HIGH: 'bg-orange-100 text-orange-800',
+    URGENT: 'bg-red-100 text-red-800',
   };
 
+  // Default style if priority is not recognized
+  const defaultStyle = 'bg-gray-200 text-gray-600';
+
   return (
-    <span className={`px-2 py-1 rounded-full text-sm ${priorityStyles[priority] || ''}`}>
-      {priority}
-    </span>
-  );
+    <span className={`px-2 py-1 rounded-full text-sm ${priorityStyles[priority] || defaultStyle}`}>
+      {priority || 'Unknown'}
+    </span>)
 }
+
 
 function formatDate(date: Date): string {
   return new Date(date).toLocaleDateString('en-GB', {

@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await request.json();
+    console.log("Before validation!")
 
     const validationResult = validateTaskData(data);
     if (!validationResult.success) {
@@ -30,6 +31,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    console.log("After validation!")
 
     const { 
       title,

@@ -14,14 +14,16 @@ export enum TaskStatus {
   COMPLETED = 'COMPLETED'
 }
 
-export interface TaskCreateData {
-  caseId: string;
-  assignedTo: string;
+export interface TaskFormData {
   title: string;
   description: string;
   priority: TaskPriority;
   status: TaskStatus;
-  dueDate: Date;
+  caseId: string;
+  assignedTo: string;
+  clientId: string;
+  startDate: string;
+  deadline: string;
 }
 
 export interface Task {
@@ -65,7 +67,7 @@ interface TaskListResponse {
 const TASKS_ENDPOINT = "/tasks"
 
 export const taskApi = {
-  createTask: async (data: TaskCreateData) => {
+  createTask: async (data: TaskFormData) => {
     const { data: response } = await api.post<Task>(TASKS_ENDPOINT, data);
     return response;
   },
