@@ -82,7 +82,7 @@ export default function CreateTaskPage() {
                   className="form-select w-full rounded-md border-gray-300"
                 >
                   <option value="">Select Priority</option>
-                  <option value="URGENT">URGENT</option>
+                  <option value="URGENT">Urgent</option>
                   <option value="HIGH">High</option>
                   <option value="MEDIUM">Medium</option>
                   <option value="LOW">Low</option>

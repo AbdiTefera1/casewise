@@ -21,40 +21,51 @@ export enum CasePriority {
 export interface Case {
   id: string;
   organizationId: string;
-  clientId?: string;
+  clientId: string;
   lawyerId: string;
   title: string;
   description: string;
-  status: CaseStatus;
-  priority: CasePriority;
+  judge: string | null;
+  caseType: string;
+  caseSubType: string;
+  stageOfCase: string;
+  filingNumber: string;
+  filingDate: Date;
+  act: string;
+  firstHearingDate: Date;
+  nextHearingDate: Date | null;
+  policeStation: string;
+  firNumber: string;
+  firDate: Date;
+  transferDate: Date | null;
+  fromCourt: string | null;
+  toCourt: string | null;
+  status: string;
+  priority: string;
   caseNumber: string;
-  startDate?: Date;
-  endDate?: Date;
-  deletedAt?: Date;
-  createdAt: Date;
-  updatedAt: Date;
-  // Relations
-  client?: {
-    id: string;
-    firstName: string;
-    email: string;
-  };
+  startDate: Date;
+  endDate: Date;
   lawyer: {
     id: string;
-    name: string;
     email: string;
+    name: string;
   };
   courts: {
     id: string;
+    organizationId: string | null;
+    caseId: string;
     courtNo: string;
     courtType: string;
     court: string;
     judgeType: string;
     judgeName: string;
     remarks: string;
-    createdAt: Date;
-    updatedAt: Date;
   }[];
+  client: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
 }
 
 export interface Court {
@@ -125,7 +136,7 @@ export const casesApi = {
   getById: (id: string) => 
     api.get<Case>(`${CASES_ENDPOINT}/${id}`),
 
-  update: (id: string, data: UpdateCaseData) => 
+  update: (id: string, data: CaseFormData) => 
     api.patch<Case>(`${CASES_ENDPOINT}/${id}`, data),
 
   delete: (id: string) => 

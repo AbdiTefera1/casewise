@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import { useCases } from '@/hooks/useCases';
 import { CaseStatus, CasePriority, Case } from '@/lib/api/cases';
 import Link from 'next/link';
+import { FaEdit, FaEye } from 'react-icons/fa';
 
 type TabType = 'ALL' | 'IMPORTANT' | 'ARCHIVED';
 
@@ -61,10 +62,8 @@ const CasesPage = () => {
   };
 
   const { data, isLoading } = useCases(getQueryParams());
-  // console.log(data)
 
   const { cases = [], pagination } = data || { cases: [], pagination: { total: 0, pages: 0 } };
-  console.log(cases)
   // Filter important cases on the frontend when needed
   const filteredCases = useMemo(() => {
     if (!cases) return [];
@@ -292,10 +291,13 @@ const CasesPage = () => {
                       {caseItem.priority}
                     </span>
                   </td>
-                  <td className="px-4 py-2">
-                    <button className="text-gray-400 hover:text-gray-600">
-                      <i className="fas fa-ellipsis-h"></i>
-                    </button>
+                  <td className="border-b px-4 py-2 flex justify-center gap-2">
+                    <Link href={`/cases/${caseItem.id}`} className="text-[#4CAF50] hover:text-gray-600">
+                      <FaEye size={24}/>                  
+                    </Link>
+                    <Link href={`/cases/${caseItem.id}/edit`} className="text-[#24A0ED] hover:text-gray-600">
+                      <FaEdit size={24}/>
+                    </Link>
                   </td>
                 </tr>
               ))}

@@ -38,6 +38,14 @@ export async function GET(
             name: true
           }
         },
+        courts: true,
+        client: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true
+          }
+        }
       }
     });
 

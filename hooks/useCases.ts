@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { CasePriority, casesApi, CaseStatus } from '@/lib/api/cases'
+import { CasePriority, casesApi, CaseStatus, CaseFormData } from '@/lib/api/cases'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface UpdateCaseData {
@@ -61,7 +61,7 @@ export const useCases = (params?: {
     const queryClient = useQueryClient();
   
     return useMutation({
-      mutationFn: ({ id, ...data }: UpdateCaseData & { id: string }) =>
+      mutationFn: ({ id, ...data }: CaseFormData & { id: string }) =>
         casesApi.update(id, data),
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: ['cases'] });

@@ -8,8 +8,9 @@ import { useClient, useUpdateClient } from '@/hooks/useClients';
 import { CompanyType, ClientStatus, UpdateClientData } from '@/lib/api/clients';
 
 
-export default function UpdateClientPage({ params }: { params: { id: string } }) {
+export default function UpdateClientPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('basicInfo');
   

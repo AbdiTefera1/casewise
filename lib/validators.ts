@@ -73,6 +73,12 @@ const caseSchema = z.object({
   firstHearingDate: z.string().refine(date => !isNaN(Date.parse(date)), {
     message: "Invalid first hearing date format" // Validate date format
   }),
+  judge: z.string(),
+transferDate: z.string().refine(date => !isNaN(Date.parse(date)), {
+  message: "Invalid transfer date format" // Validate date format
+}),
+fromCourt: z.string(),
+toCourt: z.string(),
   policeStation: z.string(), // Name of the police station involved
   firNumber: z.string(), // FIR number related to the case
   firDate: z.string().refine(date => !isNaN(Date.parse(date)), {

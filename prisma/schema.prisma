@@ -211,6 +211,7 @@ model Case {
   lawyerId         String
   title            String
   description      String        @db.Text
+  judge            String?       @db.Text
   caseType         String
   caseSubType      String
   stageOfCase      String
@@ -222,6 +223,9 @@ model Case {
   policeStation    String
   firNumber        String
   firDate          DateTime
+  transferDate     DateTime?
+  fromCourt        String?
+  toCourt          String?
   status           CaseStatus
   priority         CasePriority?
   caseNumber       String

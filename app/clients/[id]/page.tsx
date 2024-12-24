@@ -5,7 +5,7 @@ import { use, useState } from 'react';
 import { useClient } from '@/hooks/useClients';
 import { Client, CompanyType, ClientStatus, Gender } from '@/lib/api/clients';
 
-export default function ClientDetailsPage({ params }: { params: { id: string } }) {
+export default function ClientDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [activeTab, setActiveTab] = useState('clientDetail');
   const { data, isLoading, error } = useClient(id);

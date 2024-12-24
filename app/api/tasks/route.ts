@@ -69,8 +69,8 @@ export async function POST(request: NextRequest) {
         caseId,
         assignedTo,
         clientId,
-        startDate,
-        deadline,
+        startDate: startDate ? new Date(startDate) : "",
+        deadline: deadline ? new Date(deadline): "",
         organizationId: session.user.organizationId
       },
       include: {
