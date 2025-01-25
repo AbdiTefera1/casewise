@@ -187,6 +187,7 @@ export function validateLawyerRegistrationData(data: any) {
   const appointmentSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().min(1, 'Description is required'),
+  appointmentDate: z.string().transform(str =>  new Date(str) ),
   startTime: z.string().transform(str =>  new Date(str) ),  // Can be null
   endTime: z.string().transform(str => new Date(str) ),    // Can be null
   status: z.enum(['SCHEDULED', 'COMPLETED', 'CANCELLED', 'RESCHEDULED']),

@@ -30,39 +30,72 @@ export interface AppointmentCreateData {
   status: AppointmentStatus;
 }
 
+// export interface Appointment {
+//   id: string;
+//   caseId: string;
+//   clientId: string;
+//   lawyerId: string;
+//   title: string;
+//   description: string;
+//   organizationId?: string;
+//   appointmentDate: Date;
+//   startTime: Date;
+//   endTime: Date;
+//   location: string;
+//   type: AppointmentType;
+//   status: AppointmentStatus;
+//   createdAt: Date;
+//   updatedAt: Date;
+//   case: {
+//     id: string;
+//     title: string;
+//   };
+//   client: {
+//     id: string;
+//     name: string;
+//     email: string;
+//   };
+//   lawyer: {
+//     id: string;
+//     name: string;
+//     email: string;
+//   };
+//   organization?: {
+//     id: string;
+//     name: string;
+//   };
+// }
+
 export interface Appointment {
   id: string;
-  caseId: string;
-  clientId: string;
-  lawyerId: string;
   title: string;
   description: string;
-  organizationId?: string;
-  appointmentDate: Date;
-  startTime: Date;
-  endTime: Date;
+  appointmentDate: string;
+  startTime: string;
+  endTime: string;
+  status: AppointmentStatus;
   location: string;
   type: AppointmentType;
-  status: AppointmentStatus;
-  createdAt: Date;
-  updatedAt: Date;
-  case: {
-    id: string;
-    title: string;
-  };
-  client: {
-    id: string;
-    name: string;
-    email: string;
-  };
+  lawyerId: string;
+  clientId: string;
+  caseId?: string;
+  organizationId?: string;
+  createdAt: string;
+  updatedAt: string;
   lawyer: {
     id: string;
     name: string;
     email: string;
   };
-  organization?: {
+  client: {
     id: string;
-    name: string;
+    firstName: string;
+    email: string;
+  };
+  case?: {
+    id: string;
+    title: string;
+    caseNumber: string;
   };
 }
 
@@ -81,7 +114,6 @@ export const appointmentApi = {
     endDate?: Date;
     status?: AppointmentStatus;
     type?: AppointmentType;
-    organizationId?: string;
   }) => {
     const { data } = await api.get<{
       appointments: Appointment[];

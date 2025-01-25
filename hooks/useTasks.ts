@@ -1,7 +1,7 @@
 "use client"
 // hooks/useTasks.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {taskApi, TaskCreateData, TaskPriority, TaskStatus} from '@/lib/api/tasks';
+import {taskApi, TaskFormData, TaskPriority, TaskStatus} from '@/lib/api/tasks';
 
 export function useTasks(params?: Parameters<typeof taskApi.getTasks>[0]) {
     return useQuery({
@@ -61,7 +61,7 @@ export function useTasks(params?: Parameters<typeof taskApi.getTasks>[0]) {
     const queryClient = useQueryClient();
   
     return useMutation({
-      mutationFn: ({ id, data }: { id: string; data: Partial<Omit<TaskCreateData, 'caseId'>> }) =>
+      mutationFn: ({ id, data }: { id: string; data: Partial<Omit<TaskFormData, 'caseId'>> }) =>
         taskApi.updateTask(id, data),
       onSuccess: (updatedTask) => {
         queryClient.invalidateQueries({ queryKey: ['tasks'] });

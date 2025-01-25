@@ -116,7 +116,7 @@ export const taskApi = {
     return data;
   },
 
-  updateTask: async (id: string, data: Partial<Omit<TaskCreateData, 'caseId'>>) => {
+  updateTask: async (id: string, data: Partial<Omit<TaskFormData, 'caseId'>>) => {
     const { data: response } = await api.patch<Task>(`${TASKS_ENDPOINT}/${id}`, data);
     return response;
   },

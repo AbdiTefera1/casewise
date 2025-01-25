@@ -41,12 +41,13 @@ export async function GET(
       assignedTo: session.user.role === 'LAWYER' ? session.user.id : undefined
     };
 
+    // deadline: deadline ? new Date(deadline)
     const [tasks, total] = await Promise.all([
       prisma.task.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { dueDate: 'asc' },
+        orderBy: { deadline: 'asc' },
         include: {
           assignee: {
             select: {

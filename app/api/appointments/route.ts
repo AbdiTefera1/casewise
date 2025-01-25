@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { validateAppointmentData } from '@/lib/validators';
 import { AppointmentStatus, Prisma } from '@prisma/client';
+import { create } from 'domain';
 
 export async function POST(request: NextRequest) {
   try {
@@ -55,7 +56,8 @@ export async function POST(request: NextRequest) {
         ...data,
         startTime: new Date(data.startTime),
         endTime: new Date(data.endTime),
-        createdById: session.user.id
+        updatedAt: new Date(),
+        createdAt: new Date()
       },
       include: {
         lawyer: {
@@ -86,7 +88,7 @@ export async function POST(request: NextRequest) {
     
   } catch (error) {
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: `Internal server error ${error}` },
       { status: 500 }
     );
   }

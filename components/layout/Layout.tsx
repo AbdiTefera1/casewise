@@ -2,6 +2,7 @@
 "use client"
 
 import { useAuth } from '@/hooks/useAuth';
+import { useAuthStore } from '@/zustand/auth';
 import Sidebar from './Sidebar';
 import { redirect } from 'next/navigation';
 import Header from './Header';
@@ -14,10 +15,13 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(true);
   const { login, isLoading } = useAuth();
+  const { user } = useAuthStore();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (!user) {redirect('/');}
+
+  if (isLoading) return (<div className="flex items-center justify-center h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+  </div>);
 
   if (!login) {
     redirect('/login');

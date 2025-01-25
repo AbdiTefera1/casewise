@@ -1,25 +1,29 @@
-// import Navbar from "@/components/navigation/Navbar";
-// import SidebarContainer from '@/components/sidebar/SidebarContainer'
+// import Head from 'next/head'
+import Navbar from '@/components/Navbar'
+import Hero from '@/components/Hero'
+import Benefits from '@/components/Benefits'
+import Features from '@/components/Features'
+import Pricing from '@/components/Pricing'
+import Blog from '@/components/Blog'
+import Footer from '@/components/Footer'
 
-import Link from "next/link"
-
-// import Sidebar from "@/components/layout/Sidebar"
 
 
 export default function Home() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center flex-col">
-      <Link href="/login" className="bg-navy-700 text-white p-4 m-4 rounded-md font-bold">Login</Link>
-      <div className="h-screen w-full flex items-center justify-center">
-      <h1 className="text-5xl text-neutral-950 font-bold">Here is Hero section</h1>
-      </div>
-
-      {/* <SidebarContainer/> */}
-      {/* <Sidebar/> */}
-      <div className="h-screen w-full flex items-center justify-center bg-neutral-950">
-      <h1 className="text-5xl text-neutral-50 font-bold">Here is About section</h1>
-      </div>
+    <div className="min-h-screen bg-white">
+      {/* <Head>
+        <title>Legal Case Management Solution</title>
+        <meta name="description" content="Simplify your legal practice" />
+      </Head> */}
       
+      <Navbar />
+      <Hero />
+      <Benefits />
+      <Features />
+      <Pricing />
+      <Blog />
+      <Footer />
     </div>
-  );
+  )
 }
