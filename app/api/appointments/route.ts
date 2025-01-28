@@ -19,7 +19,8 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await request.json();
-    
+    console.log("Before validation!")
+    console.log(data)
     const validationResult = validateAppointmentData(data);
     if (!validationResult.success) {
       return NextResponse.json(
@@ -27,6 +28,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    console.log("After validation!")
 
     // Check for time slot availability
     const existingAppointment = await prisma.appointment.findFirst({

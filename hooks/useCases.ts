@@ -5,14 +5,14 @@
 import { CasePriority, casesApi, CaseStatus, CaseFormData } from '@/lib/api/cases'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-interface UpdateCaseData {
-    clientId?: string;
-    lawyerId?: string;
-    title?: string;
-    description?: string;
-    status?: CaseStatus;
-    endDate?: Date;
-  }
+// interface UpdateCaseData {
+//     clientId?: string;
+//     lawyerId?: string;
+//     title?: string;
+//     description?: string;
+//     status?: CaseStatus;
+//     endDate?: Date;
+//   }
 
 export const useCases = (params?: {
   page?: number;
