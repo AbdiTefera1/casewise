@@ -9,6 +9,7 @@ import {
   FaCog,
   FaBell,
   FaQuestionCircle,
+  FaUserPlus
 } from 'react-icons/fa';
 import { GoOrganization } from "react-icons/go";
 import { BsFillGridFill } from "react-icons/bs";
@@ -36,7 +37,14 @@ export const MENU_ITEMS: MenuItem[] = [
     icon: GoOrganization,
     label: 'Law Office',
     href: '/organizations',
-    roles: [UserRole.ADMIN, UserRole.LAWYER, UserRole.PARALEGAL]
+    roles: [UserRole.SUPERADMIN]
+  },
+  {
+    id: 'user',
+    icon: FaUserPlus,
+    label: 'User Management',
+    href: '/users',
+    roles: [UserRole.SUPERADMIN]
   },
   {
     id: 'cases',

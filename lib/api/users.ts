@@ -1,6 +1,7 @@
 import api from './config';
 
 export enum UserRole {
+    SUPERADMIN = "SUPERADMIN",
     ADMIN = "ADMIN",
     LAWYER = "LAWYER",
     PARALEGAL = "PARALEGAL",
@@ -18,6 +19,7 @@ export interface LoginCredentials {
     name: string;
     role?: UserRole;
     avator?: string;
+    organizationId?: string;
   }
   
   export interface User {
@@ -26,14 +28,24 @@ export interface LoginCredentials {
     name: string;
     role: UserRole;
     avator: string;
-    organizationId: string;
+    organization: {
+      name: string;
+      contactInfo: {
+        email: string;
+        phone: string;
+      }
+    };
+  }
+
+  export interface UsersResponse {
+    users: User[],
+    total: number;
   }
   
   // Auth API functions
   export const authApi = {
     login: async (credentials: LoginCredentials) => {
       const { data } = await api.post<{ token: string; user: User }>('/auth/login', credentials);
-      // localStorage.setItem('token', data.token);
       return data;
     },
   
@@ -49,18 +61,16 @@ export interface LoginCredentials {
   
   // User API functions
   export const userApi = {
-    getUsers: async (params?: {
-      page?: number;
-      limit?: number;
-      organizationId?: string;
-      role?: UserRole;
-    }) => {
+    register: async (userData: RegisterData) => {
+      const { data } = await api.post<User>('/auth/register', userData);
+      return data;
+    },
+
+    getUsers: async () => {
       const { data } = await api.get<{
         users: User[];
         total: number;
-        page: number;
-        limit: number;
-      }>('/users', { params });
+      }>('/users');
       return data;
     },
   
@@ -68,7 +78,7 @@ export interface LoginCredentials {
       const { data } = await api.get<User>(`/users/${id}`);
       return data;
     },
-  
+
     updateUser: async (id: string, userData: Partial<User>) => {
       const { data } = await api.patch<User>(`/users/${id}`, { ...userData, avator: userData.avator });
       return data;

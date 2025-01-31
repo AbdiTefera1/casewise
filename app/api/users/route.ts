@@ -8,25 +8,35 @@ export async function GET(request: NextRequest) {
   try {
     const session = await auth(request);
     
-    if (!session || session.user.role !== 'ADMIN') {
+    if (!session || session.user.role !== 'SUPERADMIN') {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 403 }
       );
     }
 
-    const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        email: true,
-        role: true,
-        organizationId: true,
-        createdAt: true,
-        updatedAt: true
+    const [users, total] =await Promise.all([ prisma.user.findMany({
+      where: { role: "ADMIN" },
+      // select: {
+      //   id: true,
+      //   email: true,
+      //   role: true,
+      //   organizationId: true,
+      //   createdAt: true,
+      //   updatedAt: true
+      // },
+      include: {
+        organization: true
       }
-    });
+    }),
+    prisma.user.count({ where: { role: "ADMIN" } })
+  ]);
 
-    return NextResponse.json({ users });
+  const usersWithoutPasswords = users.map(user => {
+    const { password: _, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  })
+    return NextResponse.json({ users: usersWithoutPasswords, total });
     
   } catch (error) {
     return NextResponse.json(

@@ -156,7 +156,7 @@ export async function GET(request: NextRequest) {
           }
         }
       }),
-      prisma.user.count({ where })
+      prisma.user.count({ where: {role: "LAWYER"} })
     ]);
 
     const lawyersWithoutPasswords = lawyers.map(lawyer => {

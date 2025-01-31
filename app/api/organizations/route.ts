@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await auth(request);
     
-    if (!session || session.user.role !== 'ADMIN') {
+    if (!session || session.user.role !== 'SUPERADMIN') {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 403 }
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
   try {
     const session = await auth(request);
     
-    if (!session) {
+    if (!session || session.user.role !== 'SUPERADMIN') {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

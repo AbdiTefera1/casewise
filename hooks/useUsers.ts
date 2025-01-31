@@ -4,10 +4,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { userApi, User } from '@/lib/api/users';
 
-export function useUsers(params?: Parameters<typeof userApi.getUsers>[0]) {
+export function useUsers() {
   return useQuery({
-    queryKey: ['users', params],
-    queryFn: () => userApi.getUsers(params),
+    queryKey: ['users'],
+    queryFn: () => userApi.getUsers(),
   });
 }
 
@@ -15,6 +15,18 @@ export function useUser(id: string) {
   return useQuery({
     queryKey: ['users', id],
     queryFn: () => userApi.getUser(id),
+  });
+}
+
+export function useCreateUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userApi.register,
+    onSuccess: (newUser) => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.setQueryData(['users', newUser], newUser);
+    },
   });
 }
 
