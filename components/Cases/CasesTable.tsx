@@ -1,5 +1,6 @@
 import { Case } from '@/lib/api/cases';
 import { UserRole } from '@prisma/client';
+import { FiEye, FiEdit, FiPrinter, FiDownload } from 'react-icons/fi';
 
 interface CasesTableProps {
   cases: Case[];
@@ -10,15 +11,15 @@ const CasesTable = ({ cases, userRole }: CasesTableProps) => (
   <div className="bg-white rounded-lg shadow p-6">
     <div className="flex justify-between items-center mb-4">
       <h2 className="text-lg font-semibold">Cases board</h2>
-      {['admin', 'lawyer'].includes(userRole) && (
+      {['ADMIN', 'LAWYER'].includes(userRole) && (
         <div className="flex gap-2">
-          <button className="p-2 hover:bg-gray-100 rounded">
-            <i className="fas fa-print"></i>
-          </button>
-          <button className="p-2 hover:bg-gray-100 rounded">
-            <i className="fas fa-download"></i>
-          </button>
-        </div>
+        <button className="p-2 text-gray-600 hover:text-gray-800">
+          <FiPrinter className="w-5 h-5" />
+        </button>
+        <button className="p-2 text-gray-600 hover:text-gray-800">
+          <FiDownload className="w-5 h-5" />
+        </button>
+      </div>
       )}
     </div>
     <table className="w-full">
@@ -45,10 +46,15 @@ const CasesTable = ({ cases, userRole }: CasesTableProps) => (
                 <button className="text-green-500">
                   <i className="fas fa-eye"></i>
                 </button>
-                {['admin', 'lawyer'].includes(userRole) && (
-                  <button className="text-blue-500">
-                    <i className="fas fa-edit"></i>
+                {['ADMIN', 'LAWYER'].includes(userRole) && (
+                  <div className="flex gap-2">
+                  <button className="text-green-600 hover:text-green-800">
+                    <FiEye className="w-5 h-5" />
                   </button>
+                  <button className="text-blue-600 hover:text-blue-800">
+                    <FiEdit className="w-5 h-5" />
+                  </button>
+                </div>
                 )}
               </div>
             </td>

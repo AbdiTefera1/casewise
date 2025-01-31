@@ -1,6 +1,5 @@
 import { IconType } from 'react-icons';
 import { 
-  FaGripHorizontal, 
   FaGavel, 
   FaTasks, 
   FaUsers, 
@@ -9,8 +8,10 @@ import {
   FaChartLine,
   FaCog,
   FaBell,
-  FaQuestionCircle
+  FaQuestionCircle,
 } from 'react-icons/fa';
+import { GoOrganization } from "react-icons/go";
+import { BsFillGridFill } from "react-icons/bs";
 import { UserRole } from '@prisma/client';
 
 export interface MenuItem {
@@ -25,9 +26,16 @@ export interface MenuItem {
 export const MENU_ITEMS: MenuItem[] = [
   {
     id: 'dashboard',
-    icon: FaGripHorizontal,
+    icon: BsFillGridFill,
     label: 'Dashboard',
     href: '/dashboard',
+    roles: [UserRole.ADMIN, UserRole.LAWYER, UserRole.PARALEGAL]
+  },
+  {
+    id: 'organization',
+    icon: GoOrganization,
+    label: 'Law Office',
+    href: '/organizations',
     roles: [UserRole.ADMIN, UserRole.LAWYER, UserRole.PARALEGAL]
   },
   {

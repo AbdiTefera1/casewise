@@ -18,9 +18,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (session.user.organizationId === null) {
+      throw new Error("organizationId cannot be null");
+    }
+
     const data = await request.json();
-    console.log("Before validation!")
-    console.log(data)
     const validationResult = validateAppointmentData(data);
     if (!validationResult.success) {
       return NextResponse.json(
@@ -28,36 +30,49 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    console.log("After validation!")
 
-    // Check for time slot availability
-    const existingAppointment = await prisma.appointment.findFirst({
-      where: {
-        lawyerId: data.lawyerId,
-        startTime: {
-          lte: new Date(data.endTime)
-        },
-        endTime: {
-          gte: new Date(data.startTime)
-        },
-        status: {
-          not: 'CANCELLED'
-        }
+
+    // Convert times to UTC
+const startTime = new Date(data.startTime).toISOString();
+const endTime = new Date(data.endTime).toISOString();
+
+// Check for time slot availability
+const existingAppointment = await prisma.appointment.findFirst({
+  where: {
+    lawyerId: data.lawyerId,
+    appointmentDate: new Date(data.appointmentDate), 
+    status: { not: 'CANCELLED' },
+    OR: [
+      {
+        startTime: { lte: startTime },
+        endTime: { gte: startTime }
+      },
+      {
+        startTime: { lte: endTime },
+        endTime: { gte: endTime }
+      },
+      {
+        startTime: { gte: startTime },
+        endTime: { lte: endTime }
       }
-    });
+    ]
+  }
+});
 
-    if (existingAppointment) {
-      return NextResponse.json(
-        { error: 'Time slot is not available' },
-        { status: 409 }
-      );
-    }
+if (existingAppointment) {
+  return NextResponse.json(
+    { error: 'Time slot is not available' },
+    { status: 409 }
+  );
+}
 
     const appointment = await prisma.appointment.create({
       data: {
         ...data,
         startTime: new Date(data.startTime),
         endTime: new Date(data.endTime),
+        appointmentDate: new Date(data.appointmentDate),
+        organizationId: session.user.organizationId,
         updatedAt: new Date(),
         createdAt: new Date()
       },

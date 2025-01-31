@@ -215,14 +215,73 @@ export function validateLawyerRegistrationData(data: any) {
       : appointmentSchema;
     
     const result = schema.safeParse(data);
+
+       if (!result.success) {
+          console.log("Validation errors:", result.error.errors);
+       }
     
     return {
       success: result.success,
       error: result.success ? null : result.error.errors[0].message
     };
   }
-  
 
+
+
+//   const appointmentSchema = z
+//   .object({
+//     title: z.string().min(1, "Title is required"),
+//     description: z.string().min(1, "Description is required"),
+//     appointmentDate: z
+//       .string()
+//       .refine((date) => !isNaN(Date.parse(date)), {
+//         message: "Invalid appointment date format",
+//       }), // Validate appointment date format
+//     startTime: z
+//       .string()
+//       .refine((time) => /^[0-2][0-9]:[0-5][0-9]$/.test(time), {
+//         message: "Invalid start time format. Expected HH:mm",
+//       }), // Validate time format
+//     endTime: z
+//       .string()
+//       .refine((time) => /^[0-2][0-9]:[0-5][0-9]$/.test(time), {
+//         message: "Invalid end time format. Expected HH:mm",
+//       }), // Validate time format
+//     status: z.enum(["SCHEDULED", "COMPLETED", "CANCELLED", "RESCHEDULED"]),
+//     location: z.string().min(1, "Location is required"),
+//     type: z.enum(["IN_PERSON", "VIRTUAL"]),
+//     lawyerId: z.string().uuid("Invalid lawyer ID"),
+//     clientId: z.string().uuid("Invalid client ID"),
+//     caseId: z.string().uuid("Invalid case ID").optional(),
+//   })
+//   .refine((data) => {
+//     // Combine appointmentDate with startTime and endTime
+//     const start = new Date(`${data.appointmentDate}T${data.startTime}`);
+//     const end = new Date(`${data.appointmentDate}T${data.endTime}`);
+
+//     // Ensure endTime is after startTime
+//     return end > start;
+//   }, {
+//     message: "End time must be after start time",
+//     path: ["endTime"], // Point error to endTime
+//   });
+
+// export function validateAppointmentData(data: any) {
+//   const result = appointmentSchema.safeParse(data);
+//   if (!result.success) {
+//     console.log("Validation errors:", result.error.errors);
+//   }
+//   return {
+//     success: result.success,
+//     error: result.success ? null : result.error.errors.map(err => err.message)
+//   };
+//   return {
+//     success: result.success,
+//     error: result.success
+//       ? null
+//       : result.error.errors.map((err) => `${err.path.join(".")}: ${err.message}`),
+//   };
+// }
 
   // document validation 
 

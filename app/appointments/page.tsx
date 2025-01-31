@@ -18,8 +18,8 @@ export default function AppointmentsPage() {
     toDate: '',
   });
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<AppointmentStatus>(AppointmentStatus.SCHEDULED);
-  const [typeFilter, setTypeFilter] = useState<AppointmentType>(AppointmentType.IN_PERSON);
+  const [statusFilter, setStatusFilter] = useState<AppointmentStatus>();
+  const [typeFilter, setTypeFilter] = useState<AppointmentType>();
   const [organizationIdFilter, setOrganizationIdFilter] = useState('');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -57,7 +57,7 @@ export default function AppointmentsPage() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl text-gray-700">Appointments</h1>
+        <h1 className="text-2xl">Appointments</h1>
         <Link
         href="/appointments/add"
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
@@ -67,11 +67,11 @@ export default function AppointmentsPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow mb-6">
+      <div className="rounded-lg shadow mb-6">
         <div className="p-4 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm text-gray-600 mb-1">From Date:</label>
+              <label className="block text-sm mb-1">From Date:</label>
               <input
                 type="date"
                 value={dateRange.fromDate}
@@ -80,7 +80,7 @@ export default function AppointmentsPage() {
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">To Date:</label>
+              <label className="block text-sm mb-1">To Date:</label>
               <input
                 type="date"
                 value={dateRange.toDate}
@@ -89,7 +89,7 @@ export default function AppointmentsPage() {
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Status:</label>
+              <label className="block text-sm mb-1">Status:</label>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
@@ -103,7 +103,7 @@ export default function AppointmentsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Type:</label>
+              <label className="block text-sm mb-1">Type:</label>
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value as typeof typeFilter)}
@@ -114,15 +114,15 @@ export default function AppointmentsPage() {
                 <option value="VIRTUAL">VIRTUAL</option>
               </select>
             </div>
-            <div>
-              <label className="block text-sm text-gray-600 mb-1">Organization ID:</label>
+            {/* <div>
+              <label className="block text-sm mb-1">Organization ID:</label>
               <input
                 type="text"
                 value={organizationIdFilter}
                 onChange={(e) => setOrganizationIdFilter(e.target.value)}
                 className="w-full border rounded-md px-3 py-2"
               />
-            </div>
+            </div> */}
             <div className="flex items-end gap-2">
               <button
                 onClick={handleSearch}
@@ -142,7 +142,7 @@ export default function AppointmentsPage() {
       </div>
 
       {/* Table Controls */}
-      <div className="bg-white rounded-lg shadow">
+      <div className="rounded-lg shadow">
         <div className="p-4 flex justify-between items-center border-b">
           <div className="flex items-center gap-2">
             <span>Show</span>
@@ -170,26 +170,23 @@ export default function AppointmentsPage() {
         </div>
 
         {/* Appointments Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
+        <div className="overflow-x-auto border rounded">
+          <table className="w-full border-collapse">
+            <thead className="">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">No</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Title</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Description</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Client</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Lawyer</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Case</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Date</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Start Time</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">End Time</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Status</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Location</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Type</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Action</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">No</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">Title</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">Client</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">Lawyer</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">Case</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">Date</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">Start Time</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">End Time</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">Status</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y">
               {isLoading ? (
                 <tr>
                   <td colSpan={13} className="text-center py-4">Loading...</td>
@@ -199,7 +196,6 @@ export default function AppointmentsPage() {
                   <tr key={appointment.id}>
                     <td className="px-4 py-3">{(page - 1) * limit + index + 1}</td>
                     <td className="px-4 py-3">{appointment.title}</td>
-                    <td className="px-4 py-3">{appointment.description}</td>
                     <td className="px-4 py-3">{appointment.client.firstName}</td>
                     <td className="px-4 py-3">{appointment.lawyer.name}</td>
                     <td className="px-4 py-3">{appointment.case?.caseNumber || 'N/A'}</td>
@@ -218,8 +214,6 @@ export default function AppointmentsPage() {
                         <option value="RESCHEDULED">RESCHEDULED</option>
                       </select>
                     </td>
-                    <td className="px-4 py-3">{appointment.location}</td>
-                    <td className="px-4 py-3">{appointment.type}</td>
                     <td className="px-4 py-3">
                       <button className="text-gray-400 hover:text-gray-600">
                         <FiMoreHorizontal />
@@ -242,14 +236,14 @@ export default function AppointmentsPage() {
             <button
               onClick={() => handlePageChange(page - 1)}
               disabled={page === 1}
-              className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"
+              className="px-4 py-2 rounded-md disabled:opacity-50"
             >
               Previous
             </button>
             <button
               onClick={() => handlePageChange(page + 1)}
               disabled={page >= (appointmentsData?.pagination.totalPages || 1)}
-              className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"
+              className="px-4 py-2 rounded-md disabled:opacity-50"
             >
               Next
             </button>

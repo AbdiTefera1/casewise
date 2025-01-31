@@ -1,17 +1,13 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { FiX } from 'react-icons/fi';
 import { useCreateAppointment } from '@/hooks/useAppointments';
 import { useLawyers } from '@/hooks/useLawyers';
 import { useClients } from '@/hooks/useClients';
 import { useCases } from '@/hooks/useCases';
 
-interface CreateAppointmentModalProps {
-    onClose: () => void;
-}
 
-function CreateAppointmentModal({ onClose }: CreateAppointmentModalProps) {
+function CreateAppointmentModal() {
     const { register, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
             title: '',
@@ -24,8 +20,7 @@ function CreateAppointmentModal({ onClose }: CreateAppointmentModalProps) {
             type: 'IN_PERSON',
             lawyerId: '',
             clientId: '',
-            caseId: '',
-            organizationId: ''
+            caseId: ''
         }
     });
 
@@ -37,7 +32,6 @@ function CreateAppointmentModal({ onClose }: CreateAppointmentModalProps) {
     const onSubmit = async (data: any) => {
         try {
             await createAppointment.mutateAsync(data);
-            onClose();
         } catch (error) {
             console.error("Error creating appointment:", error);
             // Handle error appropriately (e.g., show a notification)
@@ -45,13 +39,9 @@ function CreateAppointmentModal({ onClose }: CreateAppointmentModalProps) {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
+            <div className="p-6 max-w-4xl mx-auto">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-semibold">Create Appointment</h2>
-                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-                        <FiX className="w-6 h-6" />
-                    </button>
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -111,7 +101,7 @@ function CreateAppointmentModal({ onClose }: CreateAppointmentModalProps) {
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Start Time</label>
                             <input
-                                type="time"
+                                type="datetime-local"
                                 {...register('startTime', { required: 'Start time is required' })}
                                 className="mt-1 block w-full border rounded-md shadow-sm p-2"
                                 aria-invalid={errors.startTime ? 'true' : 'false'}
@@ -121,7 +111,7 @@ function CreateAppointmentModal({ onClose }: CreateAppointmentModalProps) {
                         <div>
                             <label className="block text-sm font-medium text-gray-700">End Time</label>
                             <input
-                                type="time"
+                                type="datetime-local"
                                 {...register('endTime', { required: 'End time is required' })}
                                 className="mt-1 block w-full border rounded-md shadow-sm p-2"
                                 aria-invalid={errors.endTime ? 'true' : 'false'}
@@ -176,13 +166,6 @@ function CreateAppointmentModal({ onClose }: CreateAppointmentModalProps) {
 
                     <div className="flex justify-end gap-4 mt-6">
                         <button
-                            type="button"
-                            onClick={onClose}
-                            className="px-4 py-2 text-gray-700 border rounded-md hover:bg-gray-50"
-                        >
-                            Cancel
-                        </button>
-                        <button
                             type="submit"
                             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                         >
@@ -191,7 +174,6 @@ function CreateAppointmentModal({ onClose }: CreateAppointmentModalProps) {
                     </div>
                 </form>
             </div>
-        </div>
     );
 }
 

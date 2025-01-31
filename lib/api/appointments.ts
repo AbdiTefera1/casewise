@@ -21,7 +21,6 @@ export interface AppointmentCreateData {
   lawyerId: string;
   title: string;
   description: string;
-  organizationId?: string;
   appointmentDate: Date;
   startTime: Date;
   endTime: Date;

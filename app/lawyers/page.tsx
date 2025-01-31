@@ -31,7 +31,6 @@ const LawyersPage = () => {
     status: statusFilter
   });
 
-  console.log(data);
   const handleSort = (column: string) => {
     setSort(prev => ({
       sortBy: column,
@@ -49,6 +48,7 @@ const LawyersPage = () => {
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
     </div>
   );
+  
   if (error) return <div className="flex justify-center p-8 text-red-500">Error loading lawyers</div>;
 
   return (

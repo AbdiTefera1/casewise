@@ -23,7 +23,7 @@ const TaskList = ({ tasks, userRole }: TaskListProps) => {
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Task List</h2>
-        {['admin', 'lawyer'].includes(userRole) && (
+        {['ADMIN', 'LAWYER'].includes(userRole) && (
           <button className="text-blue-500 hover:text-blue-700">
             <i className="fas fa-plus"></i> Add Task
           </button>
