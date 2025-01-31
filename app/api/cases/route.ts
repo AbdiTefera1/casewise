@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
     const data = await request.json();
     
     console.log("Before validation!");
+    console.log(data)
     const { success, error } = validateCaseData(data);
     
     if (!success) {

@@ -146,7 +146,7 @@ export default function AddCasePage() {
                   <option value="HIGH">High</option>
                   <option value="MEDIUM">Medium</option>
                   <option value="URGENT">URGENT</option>
-                  <option value="Low">Low</option>
+                  <option value="LOW">LOW</option>
                 </select>
               </div>
   

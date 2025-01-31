@@ -7,10 +7,15 @@
 generator client {
   provider = "prisma-client-js"
 }
+// "postinstall": "prisma generate && prisma migrate deploy"
+// datasource db {
+//   // provider = "postgresql"
+//   provider = "mysql"
+//   url      = env("DATABASE_URL")
+// }
 
 datasource db {
-  // provider = "postgresql"
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

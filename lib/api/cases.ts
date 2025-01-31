@@ -99,14 +99,14 @@ export interface CaseFormData {
   assignedToId: string;
 }
 
-interface UpdateCaseData {
-  clientId?: string;
-  lawyerId?: string;
-  title?: string;
-  description?: string;
-  status?: CaseStatus;
-  endDate?: Date;
-}
+// interface UpdateCaseData {
+//   clientId?: string;
+//   lawyerId?: string;
+//   title?: string;
+//   description?: string;
+//   status?: CaseStatus;
+//   endDate?: Date;
+// }
 
 interface CaseListResponse {
   cases: Case[]; // Replace `any` with your actual `Case` type.

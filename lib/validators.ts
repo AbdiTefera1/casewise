@@ -73,12 +73,12 @@ const caseSchema = z.object({
   firstHearingDate: z.string().refine(date => !isNaN(Date.parse(date)), {
     message: "Invalid first hearing date format" // Validate date format
   }),
-  judge: z.string(),
+  judge: z.string().optional(),
 transferDate: z.string().refine(date => !isNaN(Date.parse(date)), {
   message: "Invalid transfer date format" // Validate date format
-}),
-fromCourt: z.string(),
-toCourt: z.string(),
+}).optional(),
+fromCourt: z.string().optional(),
+toCourt: z.string().optional(),
   policeStation: z.string(), // Name of the police station involved
   firNumber: z.string(), // FIR number related to the case
   firDate: z.string().refine(date => !isNaN(Date.parse(date)), {
@@ -99,7 +99,9 @@ toCourt: z.string(),
 // Function to validate theft case data
 export function validateCaseData(data: any) {
   const result = caseSchema.safeParse(data);
-  
+  if (!result.success) {
+    console.log("Validation errors:", result.error.errors);
+  }
   return {
     success: result.success,
     error: result.success ? null : result.error.errors.map(err => err.message)
