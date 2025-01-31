@@ -34,7 +34,7 @@ export interface Organization {
   deletedAt?: string;
 }
 
-interface CreateOrganizationData {
+export interface CreateOrganizationData {
   name: string;
   contactInfo: ContactInfo;
   domain: string;

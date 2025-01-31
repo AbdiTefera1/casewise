@@ -21,7 +21,7 @@ const OrganizationPage = () => {
   const [domainFilter, setDomainFilter] = useState('');
   const [planFilter, setPlanFilter] = useState('');
 
-  const { data, isLoading, error} = useOrganizations({
+  const { data, isLoading} = useOrganizations({
     page,
     limit,
     search,

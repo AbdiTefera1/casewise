@@ -49,8 +49,7 @@ export async function GET(
     }
 
     // Check if user has access to this organization
-    if (session.user.role !== 'ADMIN' && 
-        session.user.organizationId !== organization.id) {
+    if (session.user.role !== "SUPERADMIN") {
       return NextResponse.json(
         { error: 'Forbidden' },
         { status: 403 }
@@ -95,7 +94,7 @@ export async function PATCH(
 
     // Check if user has permission to update
     if (session.user.role !== 'ADMIN' && 
-        session.user.organizationId !== organization.id) {
+      session.user.organizationId !== organization.id) {
       return NextResponse.json(
         { error: 'Forbidden' },
         { status: 403 }
