@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     const user = await prisma.user.findUnique({
       where: { email }
     });
-    if(user?.role === "SUPERADMIN") console.log(user)
+
     if (!user) {
       return NextResponse.json(
         { error: 'Invalid credentials' },

@@ -19,7 +19,6 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await request.json();
-    // console.log("Before Validation!")
     const validationResult = validateLawyerRegistrationData(data);
     if (!validationResult.success) {
       return NextResponse.json(
@@ -27,7 +26,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    // console.log("After validation!")
 
     
     const {

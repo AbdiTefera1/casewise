@@ -7,8 +7,14 @@ export function useTasks(params?: Parameters<typeof taskApi.getTasks>[0]) {
     return useQuery({
       queryKey: ['tasks', params],
       queryFn: async () => {
-        const { tasks, pagination } = await taskApi.getTasks(params);
-        return {tasks, pagination};
+        try{
+          const { tasks, pagination } = await taskApi.getTasks(params);
+          return {tasks, pagination};
+        } catch (error) {
+          console.error('Tasks fetch error:', error);
+          throw new Error('Failed to fetch tasks');
+        }
+  
       },
     });
   }

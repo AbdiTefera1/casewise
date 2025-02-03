@@ -1,7 +1,7 @@
 "use client"
 
 import { useAuth } from '@/hooks/useAuth';
-import { useAuthStore } from '@/zustand/auth';
+// import { useAuthStore } from '@/zustand/auth';
 import Sidebar from './Sidebar';
 import { redirect } from 'next/navigation';
 import Header from './Header';
@@ -14,7 +14,7 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(true);
   const { login, isLoading } = useAuth();
-  const { user } = useAuthStore();
+  // const { user } = useAuthStore();
 
   // Dark mode state
   const [isDarkMode, setIsDarkMode] = useState(false);

@@ -30,7 +30,7 @@ export const MENU_ITEMS: MenuItem[] = [
     icon: BsFillGridFill,
     label: 'Dashboard',
     href: '/dashboard',
-    roles: [UserRole.ADMIN, UserRole.LAWYER, UserRole.PARALEGAL]
+    roles: [UserRole.SUPERADMIN, UserRole.ADMIN, UserRole.LAWYER, UserRole.PARALEGAL]
   },
   {
     id: 'organization',

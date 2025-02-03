@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useAuthStore } from '@/zustand/auth';
-// import { useAuth } from '@/hooks/useAuth'
 import { useTasks } from '@/hooks/useTasks';
 import { useCases } from '@/hooks/useCases';
 import { PageHeader } from './PageHeader';

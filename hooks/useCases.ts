@@ -30,8 +30,13 @@ export const useCases = (params?: {
   return useQuery({
     queryKey: ['cases', params],
     queryFn: async () => {
-      const { cases, pagination } = await casesApi.getAll(params);
-      return { cases, pagination };
+      try{
+        const { cases, pagination } = await casesApi.getAll(params);
+        return { cases, pagination };
+      } catch (error) {
+        console.error('Cases fetch error:', error);
+        throw new Error('Failed to fetch cases');
+      }
     },
   });
 };

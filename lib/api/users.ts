@@ -54,8 +54,9 @@ export interface LoginCredentials {
       return data;
     },
   
-    logout: () => {
+    logout: async () => {
       localStorage.removeItem('token');
+      await api.post('/auth/logout');
     },
   };
   

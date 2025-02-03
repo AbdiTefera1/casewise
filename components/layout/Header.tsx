@@ -7,6 +7,7 @@ import logo from "@/public/logo.svg";
 import Image from 'next/image';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
 interface HeaderProps {
   setIsMenuOpen: (value: boolean) => void;
@@ -19,8 +20,10 @@ const Header: React.FC<HeaderProps> = ({ setIsMenuOpen, isMenuOpen, toggleDarkMo
   const { user } = useAuthStore();
   const [isDropdown, setIsDropdown] = useState(false);
   const { logout } = useAuth();
+  const router = useRouter();
 
   const handleLogout = () => {
+    router.push("/login")
     logout(); 
     setIsDropdown(false); 
   };

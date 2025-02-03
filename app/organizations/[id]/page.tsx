@@ -1,7 +1,7 @@
 "use client";
 
 import { useOrganization, useDeleteOrganization } from '@/hooks/useOrganization';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { use, useState } from 'react';
 import Link from 'next/link';

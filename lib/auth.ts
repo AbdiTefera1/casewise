@@ -9,7 +9,13 @@ export async function auth(request: NextRequest) {
   try {
     const authorization = request.headers.get('authorization');
 
-    // console.log("Here is authorization that come from headers: ",authorization)
+   const tokenFromCookies = request.cookies.get("token")
+  //  console.log("Token from cookies: ", tokenFromCookies)
+  //  console.log("Token value: ", tokenFromCookies?.value)
+
+    if(!tokenFromCookies) {
+      console.warn("Authorization cookies missed!")
+    }
 
     if (!authorization?.startsWith('Bearer ')) {
       console.warn('Authorization header missing or invalid');
@@ -20,8 +26,11 @@ export async function auth(request: NextRequest) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwt.JwtPayload;
     // console.log('Decoded Token:', decoded);
 
+    const decodedCookies = jwt.verify(tokenFromCookies?.value as string, process.env.JWT_SECRET as string) as jwt.JwtPayload;
+    // console.log("Decoded cookies: ", decodedCookies)
+
     const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
+      where: { id: decodedCookies.userId },
       select: {
         id: true,
         email: true,
