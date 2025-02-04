@@ -12,6 +12,13 @@ export default function CasePage({ params }: { params: Promise<{ id: string }> }
 
   const { data: caseData, isLoading } = useCase(id);
 
+   // Utility function to safely handle dates
+   const safeDate = (dateString: string | Date | undefined | null): string => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? 'N/A' : date.toLocaleDateString();
+  };
+
   if (isLoading) return (<div className="flex items-center justify-center h-screen">
     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
   </div>);
@@ -53,58 +60,70 @@ export default function CasePage({ params }: { params: Promise<{ id: string }> }
 
         {/* Tab Content */}
         <div className="p-4">
-          {activeTab === 'Detail' && (
-            <div className="space-y-6">
-              {/* Case Detail Section */}
-              <section>
-                <h2 className="text-lg font-medium mb-4">Case Detail</h2>
-                <div className="grid grid-cols-2 gap-4">
-                  <DetailField label="Case Type" value={`${caseData?.data.case.caseType} - ${caseData?.data.case.caseSubType}`} />
-                  <DetailField label="First Hearing Date" value={new Date(caseData?.data.case.firstHearingDate).toLocaleDateString()} />
-                  <DetailField label="Filing Number" value={caseData?.data.case.filingNumber} />
-                  <DetailField label="Next Hearing Date" value={caseData?.data.case.nextHearingDate ? new Date(caseData?.data.case.nextHearingDate).toLocaleDateString() : 'N/A'} />
-                  <DetailField label="Filing Date" value={new Date(caseData?.data.case.filingDate).toLocaleDateString()} />
-                  <DetailField label="Case Status" value={caseData?.data.case.status} />
-                  <DetailField label="Case Number" value={caseData?.data.case.caseNumber} />
-                  <DetailField label="Judge" value={caseData?.data.case.judge || 'N/A'} />
-                  <DetailField label="Police Station" value={caseData?.data.case.policeStation} />
-                  <DetailField label="FIR Number" value={caseData?.data.case.firNumber} />
-                  <DetailField label="FIR Date" value={new Date(caseData?.data.case.firDate).toLocaleDateString()} />
-                </div>
-              </section>
+        {activeTab === 'Detail' && (
+          <div className="space-y-6">
+            {/* Case Detail Section */}
+            <section>
+              <h2 className="text-lg font-medium mb-4">Case Detail</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <DetailField 
+                  label="Case Type" 
+                  value={`${caseData?.case.caseType || 'N/A'} - ${caseData?.case.caseSubType || 'N/A'}`} 
+                />
+                <DetailField label="First Hearing Date" value={safeDate(caseData?.case.firstHearingDate)} />
+                <DetailField label="Filing Number" value={caseData?.case.filingNumber || 'N/A'} />
+                <DetailField label="Next Hearing Date" value={safeDate(caseData?.case.nextHearingDate)} />
+                <DetailField label="Filing Date" value={safeDate(caseData?.case.filingDate)} />
+                <DetailField label="Case Status" value={caseData?.case.status || 'N/A'} />
+                <DetailField label="Case Number" value={caseData?.case.caseNumber?.toString() || 'N/A'} />
+                <DetailField label="Judge" value={caseData?.case.judge || 'N/A'} />
+                <DetailField label="Police Station" value={caseData?.case.policeStation || 'N/A'} />
+                <DetailField label="FIR Number" value={caseData?.case.firNumber || 'N/A'} />
+                <DetailField label="FIR Date" value={safeDate(caseData?.case.firDate)} />
+              </div>
+            </section>
 
-              {/* Lawyer Section */}
-              <section>
-                <h2 className="text-lg font-medium mb-4">Lawyer</h2>
-                <div className="space-y-2">
-                  <DetailField label="Name" value={caseData?.data.case.lawyer.name} />
-                  <DetailField label="Email" value={caseData?.data.case.lawyer.email} />
-                </div>
-              </section>
+            {/* Lawyer Section */}
+            <section>
+              <h2 className="text-lg font-medium mb-4">Lawyer</h2>
+              <div className="space-y-2">
+                <DetailField 
+                  label="Name" 
+                  value={caseData?.case.lawyer?.name || 'N/A'} 
+                />
+                <DetailField 
+                  label="Email" 
+                  value={caseData?.case.lawyer?.email || 'N/A'} 
+                />
+              </div>
+            </section>
 
-              {/* Client Section */}
-              <section>
-                <h2 className="text-lg font-medium mb-4">Client</h2>
-                <div className="space-y-2">
-                  <DetailField label="Name" value={`${caseData?.data.case.client.firstName} ${caseData?.data.case.client.lastName}`} />
-                </div>
-              </section>
+            {/* Client Section */}
+            <section>
+              <h2 className="text-lg font-medium mb-4">Client</h2>
+              <div className="space-y-2">
+                <DetailField 
+                  label="Name" 
+                  value={`${caseData?.case.client?.firstName || ''} ${caseData?.case.client?.lastName || ''}`.trim() || 'N/A'} 
+                />
+              </div>
+            </section>
 
-              {/* Courts Section */}
-              <section>
-                <h2 className="text-lg font-medium mb-4">Courts</h2>
-                <div className="space-y-2">
-                  {caseData?.data.case.courts.map((court) => (
-                    <div key={court.id}>
-                      <DetailField label="Court Type" value={court.courtType} />
-                      <DetailField label="Judge Name" value={court.judgeName} />
-                      <DetailField label="Remarks" value={court.remarks} />
-                    </div>
-                  ))}
-                </div>
-              </section>
-            </div>
-          )}
+            {/* Courts Section */}
+            <section>
+              <h2 className="text-lg font-medium mb-4">Courts</h2>
+              <div className="space-y-2">
+                {caseData?.case.courts?.map((court) => (
+                  <div key={court.id}>
+                    <DetailField label="Court Type" value={court.courtType || 'N/A'} />
+                    <DetailField label="Judge Name" value={court.judgeName || 'N/A'} />
+                    <DetailField label="Remarks" value={court.remarks || 'N/A'} />
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        )}
 
           {activeTab === 'History' && (
             <div>
@@ -170,14 +189,16 @@ export default function CasePage({ params }: { params: Promise<{ id: string }> }
 
 interface DetailFieldProps {
   label: string;
-  value: string;
+  value: React.ReactNode;  // Allow any renderable value
 }
 
 function DetailField({ label, value }: DetailFieldProps) {
   return (
     <div>
       <dt className="text-sm font-medium text-gray-500">{label}</dt>
-      <dd className="mt-1 text-sm text-gray-900">{value}</dd>
+      <dd className="mt-1 text-sm text-gray-900">
+        {value ?? 'N/A'}  {/* Fallback for null/undefined */}
+      </dd>
     </div>
   );
 }

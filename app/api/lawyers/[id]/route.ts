@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
-import { validateLawyerData } from '@/lib/validators';
+import { validateLawyerRegistrationData } from '@/lib/validators';
 
 export async function GET(
   request: NextRequest,
@@ -105,7 +105,7 @@ export async function PATCH(
 
     const data = await request.json();
     
-    const validationResult = validateLawyerData(data, true);
+    const validationResult = validateLawyerRegistrationData(data);
     if (!validationResult.success) {
       return NextResponse.json(
         { error: validationResult.error },

@@ -90,18 +90,14 @@ export async function PATCH(
 
     const data = await request.json();
     
-    // console.log("Before validation: ", data);
-    // // Validate client data
-    // const validationResult = validateCreateClientData(data, true);
-    // if (!validationResult.success) {
-    //   return NextResponse.json(
-    //     { error: validationResult.error },
-    //     { status: 400 }
-    //   );
-    // }
-
-    // console.log("After Validation: ", data);
-    // Get current client data for comparison
+    const validationResult = validateCreateClientData(data, true);
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: validationResult.error },
+        { status: 400 }
+      );
+    }
+    
     const currentClient = await prisma.client.findUnique({
       where: {
         id,
@@ -191,7 +187,7 @@ export async function DELETE(
       where: {
         clientId: id,
         status: {
-          in: ['ACTIVE', 'PENDING']
+          in: ['ACTIVE']
         },
         deletedAt: null
       }

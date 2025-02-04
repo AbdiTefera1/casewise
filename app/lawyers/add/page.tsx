@@ -84,16 +84,28 @@ export default function CreateLawyerPage() {
   const handleContactInfoChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
 
-    // Split the name attribute by '.' to handle nested fields
-    const nameParts = name.split(".");
+    // const nameParts = name.split(".");
+    const nameParts: string[] = name.split(".");
 
-    setFormData((prev) => ({
-      ...prev,
-      [nameParts[0]]: {
-        ...prev[nameParts[0]],
-        [nameParts[1]]: value,
-      },
-    }));
+    // setFormData((prev) => ({
+    //   ...prev,
+    //   [nameParts[0]]: {
+    //     ...prev[nameParts[0]],
+    //     [nameParts[1]]: value,
+    //   },
+    // }));
+    setFormData((prev) => {
+      if (nameParts.length === 2 && nameParts[0] === "contactInfo") {
+        return {
+          ...prev,
+          contactInfo: {
+            ...prev.contactInfo,
+            [nameParts[1] as keyof LawyerCreateData["contactInfo"]]: value,
+          },
+        };
+      }
+      return prev;
+    });
   };
 
 

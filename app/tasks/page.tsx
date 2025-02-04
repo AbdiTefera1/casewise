@@ -128,7 +128,7 @@ export default function TaskListPage() {
             <tbody>
               {tasks.map((task, index) => (
                 <tr key={task.id} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-3">{(pagination?.page - 1) * pagination?.limit + index + 1}</td>
+                  <td className="px-4 py-3">{((pagination?.page ?? 1) - 1) * (pagination?.limit ?? entriesPerPage) + index + 1}</td>
                   <td className="px-4 py-3">{task.title}</td>
                   <td className="px-4 py-3">{`${task.client.firstName} ${task.client.lastName}`}</td>
                   <td className="px-4 py-3">{formatDate(task.startDate)}</td>

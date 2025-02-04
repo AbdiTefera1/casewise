@@ -5,19 +5,25 @@ import { useCreateAppointment } from '@/hooks/useAppointments';
 import { useLawyers } from '@/hooks/useLawyers';
 import { useClients } from '@/hooks/useClients';
 import { useCases } from '@/hooks/useCases';
+import { AppointmentCreateData, AppointmentStatus, AppointmentType } from '@/lib/api/appointments';
 
+type AppointmentFormData = Omit<AppointmentCreateData, 'appointmentDate' | 'startTime' | 'endTime'> & {
+    appointmentDate: string;
+    startTime: string;
+    endTime: string;
+  };
 
 function CreateAppointmentModal() {
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const { register, handleSubmit, formState: { errors } } = useForm<AppointmentFormData>({
         defaultValues: {
             title: '',
             description: '',
             appointmentDate: '',
             startTime: '',
             endTime: '',
-            status: 'SCHEDULED',
+            status: AppointmentStatus.SCHEDULED,
             location: '',
-            type: 'IN_PERSON',
+            type: AppointmentType.IN_PERSON,
             lawyerId: '',
             clientId: '',
             caseId: ''
@@ -29,9 +35,17 @@ function CreateAppointmentModal() {
     const { data: clientsData } = useClients();
     const { data: casesData } = useCases();
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (formData: AppointmentFormData) => {
         try {
-            await createAppointment.mutateAsync(data);
+            // Convert string dates to Date objects
+            const appointmentData: AppointmentCreateData = {
+                ...formData,
+                appointmentDate: new Date(formData.appointmentDate),
+                startTime: new Date(formData.startTime),
+                endTime: new Date(formData.endTime)
+            };
+            
+            await createAppointment.mutateAsync(appointmentData);
         } catch (error) {
             console.error("Error creating appointment:", error);
             // Handle error appropriately (e.g., show a notification)
@@ -79,6 +93,15 @@ function CreateAppointmentModal() {
                             />
                         </div>
 
+                        {/* <div>
+                            <label className="block text-sm font-medium text-gray-700">Date</label>
+                            <input
+                                type="date"
+                                {...register('appointmentDate', { required: 'Date is required' })}
+                                className="mt-1 block w-full border rounded-md shadow-sm p-2"
+                                aria-invalid={errors.appointmentDate ? 'true' : 'false'}
+                            />
+                        </div> */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Date</label>
                             <input
@@ -87,6 +110,9 @@ function CreateAppointmentModal() {
                                 className="mt-1 block w-full border rounded-md shadow-sm p-2"
                                 aria-invalid={errors.appointmentDate ? 'true' : 'false'}
                             />
+                            {errors.appointmentDate && (
+                                <p className="text-red-500 text-sm mt-1">{errors.appointmentDate.message}</p>
+                            )}
                         </div>
 
                         <div>
@@ -98,6 +124,15 @@ function CreateAppointmentModal() {
                             />
                         </div>
 
+                        {/* <div>
+                            <label className="block text-sm font-medium text-gray-700">Start Time</label>
+                            <input
+                                type="datetime-local"
+                                {...register('startTime', { required: 'Start time is required' })}
+                                className="mt-1 block w-full border rounded-md shadow-sm p-2"
+                                aria-invalid={errors.startTime ? 'true' : 'false'}
+                            />
+                        </div> */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Start Time</label>
                             <input
@@ -106,8 +141,20 @@ function CreateAppointmentModal() {
                                 className="mt-1 block w-full border rounded-md shadow-sm p-2"
                                 aria-invalid={errors.startTime ? 'true' : 'false'}
                             />
+                            {errors.startTime && (
+                                <p className="text-red-500 text-sm mt-1">{errors.startTime.message}</p>
+                            )}
                         </div>
 
+                        {/* <div>
+                            <label className="block text-sm font-medium text-gray-700">End Time</label>
+                            <input
+                                type="datetime-local"
+                                {...register('endTime', { required: 'End time is required' })}
+                                className="mt-1 block w-full border rounded-md shadow-sm p-2"
+                                aria-invalid={errors.endTime ? 'true' : 'false'}
+                            />
+                        </div> */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700">End Time</label>
                             <input
@@ -116,6 +163,9 @@ function CreateAppointmentModal() {
                                 className="mt-1 block w-full border rounded-md shadow-sm p-2"
                                 aria-invalid={errors.endTime ? 'true' : 'false'}
                             />
+                            {errors.endTime && (
+                                <p className="text-red-500 text-sm mt-1">{errors.endTime.message}</p>
+                            )}
                         </div>
 
                         <div>

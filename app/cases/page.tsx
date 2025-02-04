@@ -3,7 +3,7 @@
 
 import { useMemo, useState } from 'react';
 import { useCases } from '@/hooks/useCases';
-import { CaseStatus, CasePriority, Case } from '@/lib/api/cases';
+import { CaseStatus, CasePriority } from '@/lib/api/cases';
 import Link from 'next/link';
 import { FaEdit, FaEye } from 'react-icons/fa';
 
@@ -70,7 +70,7 @@ const CasesPage = () => {
 
     if (activeTab === 'IMPORTANT') {
       return cases.filter(caseItem =>
-        isImportantCase(caseItem.status, caseItem.priority)
+        isImportantCase(caseItem.status as CaseStatus, caseItem.priority as CasePriority)
       );
     }
 
@@ -261,7 +261,7 @@ const CasesPage = () => {
                   <td className="px-4 py-2">{caseItem.filingNumber}</td>
                   <td className="px-4 py-2">
                     <div className="flex items-center gap-2">
-                      {isImportantCase(caseItem.status, caseItem.priority) && (
+                      {isImportantCase(caseItem.status as CaseStatus, caseItem.priority as CasePriority) && (
                         <span className="text-yellow-500">★</span>
                       )}
                       <div>
@@ -282,12 +282,12 @@ const CasesPage = () => {
                     {caseItem.endDate && new Date(caseItem.endDate).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-2">
-                    <span className={`px-2 py-1 rounded-full text-sm ${getStatusBadgeColor(caseItem.status)}`}>
+                    <span className={`px-2 py-1 rounded-full text-sm ${getStatusBadgeColor(caseItem.status as CaseStatus)}`}>
                       {caseItem.status}
                     </span>
                   </td>
                   <td className="px-4 py-2">
-                    <span className={`px-2 py-1 rounded-full text-sm ${getPriorityBadgeColor(caseItem.priority)}`}>
+                    <span className={`px-2 py-1 rounded-full text-sm ${getPriorityBadgeColor(caseItem.priority as CasePriority)}`}>
                       {caseItem.priority}
                     </span>
                   </td>
@@ -314,12 +314,12 @@ const CasesPage = () => {
             <button onClick={() => setPage(page - 1)} disabled={page === 1} className="px-3 py-1 border rounded disabled:opacity-50">
               Previous
             </button>
-            {Array.from({ length: pagination.pages }, (_, i) => (
+            {Array.from({ length: Number(pagination.totalPages) }, (_, i) => (
               <button key={i + 1} onClick={() => setPage(i + 1)} className={`px-3 py-1 border rounded ${page === i + 1 ? 'bg-blue-500 text-white' : ''}`}>
                 {i + 1}
               </button>
             ))}
-            <button onClick={() => setPage(page + 1)} disabled={page === pagination.pages} className="px-3 py-1 border rounded disabled:opacity-50">
+            <button onClick={() => setPage(page + 1)} disabled={page === pagination.totalPages} className="px-3 py-1 border rounded disabled:opacity-50">
               Next
             </button>
           </div>

@@ -99,6 +99,10 @@ export interface UpdateClientData {
   status?: ClientStatus;
 }
 
+interface clientResponse {
+  client: Client;
+}
+
 // API endpoints
 const CLIENTS_ENDPOINT = '/clients';
 
@@ -118,8 +122,10 @@ export const clientsApi = {
     industry?: string;
   }) => api.get<ClientListResponse>(CLIENTS_ENDPOINT, { params }), 
 
-  getById: (id: string) => 
-    api.get<Client>(`${CLIENTS_ENDPOINT}/${id}`),
+  getById: async (id: string) =>{ 
+    const resp = await api.get<clientResponse>(`${CLIENTS_ENDPOINT}/${id}`)
+    return resp.data;
+  },
 
   update: (id: string, data: UpdateClientData) => 
     api.patch<Client>(`${CLIENTS_ENDPOINT}/${id}`, data),

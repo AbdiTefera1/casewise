@@ -10,7 +10,7 @@ import { UpdateOrganizationData } from '@/lib/api/organizations';
 export default function EditOrganizationForm() {
   const { id } = useParams();
   const { data: organization, isLoading, error } = useOrganization(id as string);
-  const { register, handleSubmit, formState: { errors }, setValue, reset, watch } = useForm<UpdateOrganizationData>();
+  const { register, handleSubmit, formState: {  }, setValue, reset, watch } = useForm<UpdateOrganizationData>();
   const { mutate, isPending, isSuccess, error: apiError } = useUpdateOrganization();
   const [logoPreview, setLogoPreview] = useState('');
   const [isLogoUploading, setIsLogoUploading] = useState(false);

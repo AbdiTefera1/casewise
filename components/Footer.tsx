@@ -1,6 +1,7 @@
 "use client"
 // components/Footer.js
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 
 export default function Footer() {
   const footerSections = {
@@ -45,7 +46,7 @@ export default function Footer() {
           whileInView="animate"
           viewport={{ once: true }}
         >
-          {Object.entries(footerSections).map(([key, section], index) => (
+          {Object.entries(footerSections).map(([key, section]) => (
             <motion.div
               key={key}
               variants={{
@@ -65,12 +66,12 @@ export default function Footer() {
                     whileHover={{ x: 5 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <a 
+                    <Link 
                       href="#" 
                       className="text-gray-400 hover:text-white transition-colors"
                     >
                       {link}
-                    </a>
+                    </Link>
                   </motion.li>
                 ))}
               </ul>

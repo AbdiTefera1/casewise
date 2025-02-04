@@ -3,9 +3,10 @@
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { useCreateCase } from '@/hooks/useCases'; 
-import { CaseFormData} from '@/lib/api/cases';
+import { CaseFormData, CasePriority, CaseStatus} from '@/lib/api/cases';
 import { useClients } from '@/hooks/useClients'; // Adjust import path as necessary
 import { useLawyers } from '@/hooks/useLawyers';
+
 
 
 export default function AddCasePage() {
@@ -14,8 +15,8 @@ export default function AddCasePage() {
     const { register, control, handleSubmit, formState: { errors, isSubmitting } } = useForm<CaseFormData>({
         defaultValues: {
             courts: [{ courtNo: '', courtType: '', court: '', judgeType: '', judgeName: '', remarks: '' }],
-            status: 'ACTIVE',
-            priority: 'MEDIUM'
+            status: CaseStatus.ACTIVE,
+            priority: CasePriority.MEDIUM
         }
     });
     

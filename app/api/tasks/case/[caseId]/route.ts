@@ -47,7 +47,7 @@ export async function GET(
         take: limit,
         orderBy: [
           { priority: 'desc' },
-          { dueDate: 'asc' }
+          { deadline: 'asc' }
         ],
         include: {
           assignee: {

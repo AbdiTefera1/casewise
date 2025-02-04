@@ -91,25 +91,16 @@ export interface CaseFormData {
   policeStation: string;
   firNumber: string;
   firDate: string;
-  status: 'ACTIVE' | 'PENDING' | 'ARCHIVED';
-  priority: 'HIGH' | 'MEDIUM' | 'LOW' | 'URGENT';
+  status: CaseStatus;
+  priority: CasePriority;
   startDate: string;
   endDate?: string | null;
   courts: Court[];
   assignedToId: string;
 }
 
-// interface UpdateCaseData {
-//   clientId?: string;
-//   lawyerId?: string;
-//   title?: string;
-//   description?: string;
-//   status?: CaseStatus;
-//   endDate?: Date;
-// }
-
 interface CaseListResponse {
-  cases: Case[]; // Replace `any` with your actual `Case` type.
+  cases: Case[]; 
   pagination: {
     total: number;
     page: number;
@@ -117,6 +108,10 @@ interface CaseListResponse {
     totalPages: number;
   };
 };
+
+interface CaseResponse {
+  case: Case;
+}
 
 
 
@@ -133,8 +128,10 @@ export const casesApi = {
     return response.data;
   },
 
-  getById: (id: string) => 
-    api.get<Case>(`${CASES_ENDPOINT}/${id}`),
+  getById: async (id: string) => { 
+   const resp = await api.get<CaseResponse>(`${CASES_ENDPOINT}/${id}`)
+   return resp.data;
+  },
 
   update: (id: string, data: CaseFormData) => 
     api.patch<Case>(`${CASES_ENDPOINT}/${id}`, data),

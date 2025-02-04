@@ -3,14 +3,14 @@
 
 import { use, useState } from 'react';
 import { useClient } from '@/hooks/useClients';
-import { Client, CompanyType, ClientStatus, Gender } from '@/lib/api/clients';
+import { CompanyType, ClientStatus, ContactInfo } from '@/lib/api/clients';
 
 export default function ClientDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [activeTab, setActiveTab] = useState('clientDetail');
   const { data, isLoading, error } = useClient(id);
 
-  const client = data?.data?.client; 
+  const client = data?.client; 
 
   if (isLoading) {
     return (<div className="flex items-center justify-center h-screen">
@@ -180,7 +180,7 @@ function StatusBadge({ status }: { status: ClientStatus }) {
   );
 }
 
-function formatAddress(address?: Client['contactInfo']['address']): string {
+function formatAddress(address?: ContactInfo["address"]): string {
   if (!address) return 'N/A';
   
   const parts = [

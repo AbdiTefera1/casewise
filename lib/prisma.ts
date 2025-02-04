@@ -104,10 +104,10 @@ main()
     console.error('Initialization error:', e);
     process.exit(1);
   })
-  .finally(async () => {
-    // Ensure proper database connection cleanup
-    await prisma.$disconnect();
-  });
+  // .finally(async () => {
+  //   // Ensure proper database connection cleanup
+  //   await prisma.$disconnect();
+  // });
 
 if (process.env.NODE_ENV !== 'production') {
   prismaGlobal.prisma = prisma;

@@ -25,7 +25,7 @@ const ClientsPage = () => {
   const [industryFilter, setIndustryFilter] = useState<string>('');
 
   // Fetch clients using the hook
-  const { data, isLoading, error } = useClients({
+  const { data, isLoading } = useClients({
     page,
     limit,
     search,

@@ -1,7 +1,6 @@
 // app/tasks/create/page.tsx
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { useCreateTask } from '@/hooks/useTasks';
@@ -9,11 +8,13 @@ import { useLawyers } from '@/hooks/useLawyers';
 import { useCases } from '@/hooks/useCases';
 import { useClients } from '@/hooks/useClients';
 import { TaskFormData } from '@/lib/api/tasks';
+import { CaseStatus } from '@/lib/api/cases';
+import { ClientStatus } from '@/lib/api/clients';
 
 
 export default function CreateTaskPage() {
   const router = useRouter();
-  const [selectedCaseId, setSelectedCaseId] = useState<string>('');
+  // const [selectedCaseId, setSelectedCaseId] = useState<string>('');
   
   const { register, handleSubmit, formState: { errors } } = useForm<TaskFormData>();
   const createTask = useCreateTask();
@@ -21,11 +22,11 @@ export default function CreateTaskPage() {
   const { data: lawyers } = useLawyers();
   const { data: casesData } = useCases({
     limit: 100,
-    status: 'ACTIVE'
+    status: 'ACTIVE' as CaseStatus
   });
   const { data: clients } = useClients({
     limit: 100,
-    status: 'ACTIVE'
+    status: 'ACTIVE' as ClientStatus
   });
 
   const onSubmit = (data: TaskFormData) => {
@@ -147,7 +148,7 @@ export default function CreateTaskPage() {
               </label>
               <select
                 {...register('caseId', { required: 'Case is required' })}
-                onChange={(e) => setSelectedCaseId(e.target.value)}
+                // onChange={(e) => setSelectedCaseId(e.target.value)}
                 className="form-select w-full rounded-md border-gray-300"
               >
                 <option value="">Select Case</option>
@@ -214,10 +215,10 @@ export default function CreateTaskPage() {
           </button>
           <button
             type="submit"
-            disabled={createTask.isLoading}
+            disabled={createTask.isPending}
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
           >
-            {createTask.isLoading ? 'Creating...' : 'Create Task'}
+            {createTask.isPending ? 'Creating...' : 'Create Task'}
           </button>
         </div>
       </form>

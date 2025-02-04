@@ -20,7 +20,6 @@ export default function AppointmentsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<AppointmentStatus>();
   const [typeFilter, setTypeFilter] = useState<AppointmentType>();
-  const [organizationIdFilter, setOrganizationIdFilter] = useState('');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
@@ -46,7 +45,6 @@ export default function AppointmentsPage() {
     setSearchTerm('');
     setStatusFilter(AppointmentStatus.SCHEDULED);
     setTypeFilter(AppointmentType.IN_PERSON);
-    setOrganizationIdFilter('');
     setPage(1);
   };
 
@@ -229,8 +227,8 @@ export default function AppointmentsPage() {
         {/* Pagination */}
         <div className="p-4 flex justify-between items-center border-t">
           <span>
-            Showing {(page - 1) * limit + 1} to {Math.min(page * limit, appointmentsData?.pagination.total || 0)} of{' '}
-            {appointmentsData?.pagination.total} entries
+            Showing {(page - 1) * limit + 1} to {Math.min(page * limit, appointmentsData?.total || 0)} of{' '}
+            {appointmentsData?.total} entries
           </span>
           <div className="flex gap-2">
             <button
@@ -242,7 +240,7 @@ export default function AppointmentsPage() {
             </button>
             <button
               onClick={() => handlePageChange(page + 1)}
-              disabled={page >= (appointmentsData?.pagination.totalPages || 1)}
+              disabled={page >= (appointmentsData?.page || 1)}
               className="px-4 py-2 rounded-md disabled:opacity-50"
             >
               Next
