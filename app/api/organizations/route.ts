@@ -75,14 +75,6 @@ export async function GET(request: NextRequest) {
 
     const skip = (page - 1) * limit;
 
-    // const where = {
-    //   OR: search ? [
-    //     { name: { contains: search, mode: 'insensitive' } },
-    //     { domain: { contains: search, mode: 'insensitive' } }
-    //   ] : undefined,
-    //   deletedAt: null
-    // };
-
     // Constructing the where clause
     const where: Prisma.OrganizationWhereInput = {
         OR: search ? [
@@ -106,6 +98,8 @@ export async function GET(request: NextRequest) {
       }),
       prisma.organization.count({ where })
     ]);
+
+    console.log("Organizations list: ", organizations)
 
     return NextResponse.json({
       organizations,

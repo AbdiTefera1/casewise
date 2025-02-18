@@ -54,8 +54,7 @@ function ConfirmationModal({
 
 export default function OrganizationView({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
-//   const { id } = useParams();
-  const { data: organization, isLoading, error } = useOrganization(id as string);
+  const { data, isLoading, error } = useOrganization(id as string);
   const { mutate: deleteOrganization, isPending: isDeleting, error: deleteError } = useDeleteOrganization();
   const router = useRouter();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -73,7 +72,7 @@ export default function OrganizationView({ params }: { params: Promise<{ id: str
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
       <div className="flex justify-between items-start mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">{organization?.name}</h2>
+        <h2 className="text-2xl font-bold text-gray-800">{data?.organization?.name}</h2>
         <div className="flex gap-2">
           <Link
             href={`/organizations/${id}/edit`}
@@ -115,7 +114,7 @@ export default function OrganizationView({ params }: { params: Promise<{ id: str
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-600">Domain</label>
-              <p className="mt-1 text-gray-900">{organization?.domain}</p>
+              <p className="mt-1 text-gray-900">{data?.organization?.domain}</p>
             </div>
           </div>
         </div>
@@ -126,19 +125,19 @@ export default function OrganizationView({ params }: { params: Promise<{ id: str
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-600">Address</label>
-              <p className="mt-1 text-gray-900">{organization?.contactInfo?.address || '-'}</p>
+              <p className="mt-1 text-gray-900">{data?.organization?.contactInfo?.address || '-'}</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-600">Phone</label>
-              <p className="mt-1 text-gray-900">{organization?.contactInfo?.phone || '-'}</p>
+              <p className="mt-1 text-gray-900">{data?.organization?.contactInfo?.phone || '-'}</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-600">Email</label>
-              <p className="mt-1 text-gray-900">{organization?.contactInfo?.email || '-'}</p>
+              <p className="mt-1 text-gray-900">{data?.organization?.contactInfo?.email || '-'}</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-600">Website</label>
-              <p className="mt-1 text-gray-900">{organization?.contactInfo?.website || '-'}</p>
+              <p className="mt-1 text-gray-900">{data?.organization?.contactInfo?.website || '-'}</p>
             </div>
           </div>
         </div>
@@ -152,18 +151,18 @@ export default function OrganizationView({ params }: { params: Promise<{ id: str
               <div className="flex items-center gap-2 mt-1">
                 <div 
                   className="w-6 h-6 rounded border"
-                  style={{ backgroundColor: organization?.settings?.theme?.primaryColor }}
+                  style={{ backgroundColor: data?.organization?.settings?.theme?.primaryColor }}
                 ></div>
                 <span className="text-gray-900">
-                  {organization?.settings?.theme?.primaryColor}
+                  {data?.organization?.settings?.theme?.primaryColor}
                 </span>
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-600">Logo</label>
-              {organization?.settings?.theme?.logoUrl ? (
+              {data?.organization?.settings?.theme?.logoUrl ? (
                 <Image
-                  src={organization.settings.theme.logoUrl}
+                  src={data?.organization.settings.theme.logoUrl}
                   alt="Organization logo"
                   width={64}
                   height={64}
@@ -183,13 +182,13 @@ export default function OrganizationView({ params }: { params: Promise<{ id: str
             <div>
               <label className="block text-sm font-medium text-gray-600">Plan</label>
               <p className="mt-1 text-gray-900 capitalize">
-                {organization?.settings?.billing?.plan || '-'}
+                {data?.organization?.settings?.billing?.plan || '-'}
               </p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-600">Billing Cycle</label>
               <p className="mt-1 text-gray-900 capitalize">
-                {organization?.settings?.billing?.billingCycle || '-'}
+                {data?.organization?.settings?.billing?.billingCycle || '-'}
               </p>
             </div>
           </div>
@@ -199,13 +198,13 @@ export default function OrganizationView({ params }: { params: Promise<{ id: str
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-800">Enabled Features</h3>
           <div className="grid grid-cols-2 gap-4">
-            {Object.entries(organization?.settings?.features || {}).map(([feature, enabled]) => (
+            {Object.entries(data?.organization?.settings?.features || {}).map(([feature, enabled]) => (
               <div key={feature} className="flex items-center gap-2">
                 <span className={`w-2 h-2 rounded-full ${enabled ? 'bg-green-500' : 'bg-gray-300'}`}></span>
                 <span className="capitalize">{feature.replace('_', ' ')}</span>
               </div>
             ))}
-            {!organization?.settings?.features && (
+            {!data?.organization?.settings?.features && (
               <p className="text-gray-500">No features enabled</p>
             )}
           </div>

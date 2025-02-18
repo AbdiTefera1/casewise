@@ -48,7 +48,7 @@ export interface UpdateOrganizationData {
   settings?: Partial<OrganizationSettings>;
 }
 
-interface OrganizationResponse {
+interface OrganizationsResponse {
   organizations: Organization[];
   pagination: {
     total: number;
@@ -58,6 +58,10 @@ interface OrganizationResponse {
   };
 }
 
+interface OrganizationResp {
+  organization: Organization
+}
+
 const ORGANIZATIONS_ENDPOINT = '/organizations'
 
 export const organizationApi = {
@@ -65,14 +69,17 @@ export const organizationApi = {
     const response = await api.post<Organization>(ORGANIZATIONS_ENDPOINT, data);
     return response.data;
   },
-  getOrganizations: async (params?: Record<string, any>): Promise<OrganizationResponse> => {
-    const response = await api.get<OrganizationResponse>(ORGANIZATIONS_ENDPOINT, { params });
+
+  getOrganizations: async (params?: Record<string, any>): Promise<OrganizationsResponse> => {
+    const response = await api.get<OrganizationsResponse>(ORGANIZATIONS_ENDPOINT, { params });
     return response.data;
   },
+
   getOrganization: async (id: string) => {
-    const response = await api.get<Organization>(`${ORGANIZATIONS_ENDPOINT}/${id}`);
+    const response = await api.get<OrganizationResp>(`${ORGANIZATIONS_ENDPOINT}/${id}`);
     return response.data;
   },
+
   updateOrganization: async (id: string, data: UpdateOrganizationData) => {
     const response = await api.patch<Organization>(
       `${ORGANIZATIONS_ENDPOINT}/${id}`,
@@ -80,6 +87,7 @@ export const organizationApi = {
     );
     return response.data;
   },
+
   deleteOrganization: async (id: string) => {
     await api.delete(`/organizations/${id}`);
     return id;

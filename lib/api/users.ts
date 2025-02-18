@@ -41,6 +41,10 @@ export interface LoginCredentials {
     users: User[],
     total: number;
   }
+
+  interface userRep {
+    user: User
+  }
   
   // Auth API functions
   export const authApi = {
@@ -76,7 +80,7 @@ export interface LoginCredentials {
     },
   
     getUser: async (id: string) => {
-      const { data } = await api.get<User>(`/users/${id}`);
+      const { data } = await api.get<userRep>(`/users/${id}`);
       return data;
     },
 

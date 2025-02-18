@@ -9,27 +9,27 @@ import { UpdateOrganizationData } from '@/lib/api/organizations';
 
 export default function EditOrganizationForm() {
   const { id } = useParams();
-  const { data: organization, isLoading, error } = useOrganization(id as string);
+  const { data, isLoading, error } = useOrganization(id as string);
   const { register, handleSubmit, formState: {  }, setValue, reset, watch } = useForm<UpdateOrganizationData>();
   const { mutate, isPending, isSuccess, error: apiError } = useUpdateOrganization();
   const [logoPreview, setLogoPreview] = useState('');
   const [isLogoUploading, setIsLogoUploading] = useState(false);
   const router = useRouter();
 
-  const primaryColor = watch('settings.theme.primaryColor') || organization?.settings?.theme?.primaryColor || '#3b82f6';
+  const primaryColor = watch('settings.theme.primaryColor') || data?.organization?.settings?.theme?.primaryColor || '#3b82f6';
 
   // Set form default values when organization data loads
   useEffect(() => {
-    if (organization) {
+    if (data) {
       reset({
-        name: organization.name,
-        domain: organization.domain,
-        contactInfo: organization.contactInfo,
-        settings: organization.settings
+        name: data.organization.name,
+        domain: data.organization.domain,
+        contactInfo: data.organization.contactInfo,
+        settings: data.organization.settings
       });
-      setLogoPreview(organization.settings?.theme?.logoUrl || '');
+      setLogoPreview(data.organization.settings?.theme?.logoUrl || '');
     }
-  }, [organization, reset]);
+  }, [data, reset]);
 
   const onSubmit = (data: UpdateOrganizationData) => {
     mutate({ id: id as string, ...data }, {
@@ -84,7 +84,7 @@ export default function EditOrganizationForm() {
             <label className="block text-sm font-medium text-gray-700 mb-1">Organization Name</label>
             <input
               {...register('name')}
-              defaultValue={organization?.name}
+              defaultValue={data?.organization?.name}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg"
               placeholder="Acme Corp"
             />
@@ -94,7 +94,7 @@ export default function EditOrganizationForm() {
             <label className="block text-sm font-medium text-gray-700 mb-1">Domain</label>
             <input
               {...register('domain')}
-              defaultValue={organization?.domain}
+              defaultValue={data?.organization?.domain}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg"
               placeholder="acme.com"
             />
@@ -110,7 +110,7 @@ export default function EditOrganizationForm() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
               <input
                 {...register('contactInfo.address')}
-                defaultValue={organization?.contactInfo?.address}
+                defaultValue={data?.organization?.contactInfo?.address}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 placeholder="123 Main St"
               />
@@ -120,7 +120,7 @@ export default function EditOrganizationForm() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
               <input
                 {...register('contactInfo.phone')}
-                defaultValue={organization?.contactInfo?.phone}
+                defaultValue={data?.organization?.contactInfo?.phone}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 placeholder="+1 (555) 123-4567"
               />
@@ -131,7 +131,7 @@ export default function EditOrganizationForm() {
               <input
                 type="email"
                 {...register('contactInfo.email')}
-                defaultValue={organization?.contactInfo?.email}
+                defaultValue={data?.organization?.contactInfo?.email}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 placeholder="contact@acme.com"
               />
@@ -142,7 +142,7 @@ export default function EditOrganizationForm() {
               <input
                 type="url"
                 {...register('contactInfo.website')}
-                defaultValue={organization?.contactInfo?.website}
+                defaultValue={data?.organization?.contactInfo?.website}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 placeholder="https://acme.com"
               />
@@ -161,7 +161,7 @@ export default function EditOrganizationForm() {
                 <input
                   type="color"
                   {...register('settings.theme.primaryColor')}
-                  defaultValue={organization?.settings?.theme?.primaryColor}
+                  defaultValue={data?.organization?.settings?.theme?.primaryColor}
                   className="w-12 h-12 rounded cursor-pointer"
                 />
                 <span className="text-gray-600">{primaryColor}</span>
@@ -211,8 +211,8 @@ export default function EditOrganizationForm() {
                     <button
                       type="button"
                       onClick={() => {
-                        setLogoPreview(organization?.settings?.theme?.logoUrl || '');
-                        setValue('settings.theme.logoUrl', organization?.settings?.theme?.logoUrl || '');
+                        setLogoPreview(data?.organization?.settings?.theme?.logoUrl || '');
+                        setValue('settings.theme.logoUrl', data?.organization?.settings?.theme?.logoUrl || '');
                       }}
                       className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
                     >
@@ -236,7 +236,7 @@ export default function EditOrganizationForm() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Plan</label>
               <select
                 {...register('settings.billing.plan')}
-                defaultValue={organization?.settings?.billing?.plan}
+                defaultValue={data?.organization?.settings?.billing?.plan}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white"
               >
                 <option value="basic">Basic</option>
@@ -249,7 +249,7 @@ export default function EditOrganizationForm() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Billing Cycle</label>
               <select
                 {...register('settings.billing.billingCycle')}
-                defaultValue={organization?.settings?.billing?.billingCycle}
+                defaultValue={data?.organization?.settings?.billing?.billingCycle}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white"
               >
                 <option value="monthly">Monthly</option>
@@ -269,7 +269,7 @@ export default function EditOrganizationForm() {
                 <input
                   type="checkbox"
                   {...register(`settings.features.${feature}`)}
-                  defaultChecked={organization?.settings?.features?.[feature]}
+                  defaultChecked={data?.organization?.settings?.features?.[feature]}
                   className="form-checkbox h-4 w-4 text-blue-500"
                 />
                 <span className="capitalize">{feature.replace('_', ' ')}</span>

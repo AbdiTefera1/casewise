@@ -28,6 +28,7 @@ const OrganizationPage = () => {
     sortBy: sort.sortBy,
     sortOrder: sort.sortOrder
   })
+  
 
   const handleSort = (column: string) => {
     setSort(prev => ({

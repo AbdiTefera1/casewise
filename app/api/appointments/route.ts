@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { validateAppointmentData } from '@/lib/validators';
 import { AppointmentStatus, Prisma } from '@prisma/client';
-import { create } from 'domain';
+// import { create } from 'domain';
 
 export async function POST(request: NextRequest) {
   try {
