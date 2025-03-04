@@ -28,7 +28,8 @@ export async function GET(
         name: true,
         organizationId: true,
         createdAt: true,
-        updatedAt: true
+        updatedAt: true,
+        organization: true
       }
     });
 

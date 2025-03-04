@@ -1,22 +1,20 @@
 "use client"
 
 import { use, useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { FaEnvelope, FaPhone, FaBuilding, FaEdit, FaTrash, FaArrowLeft } from 'react-icons/fa';
 import Image from 'next/image';
 import { useUser, useDeleteUser } from '@/hooks/useUsers';
 
-export const UserProfilePage = ({ params }: { params: Promise<{ id: string }> }) => {
+const UserProfilePage = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
   const router = useRouter();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const {data, isLoading} = useUser(id)
   const {mutate: deleteUser, isPending: isDeleting } = useDeleteUser();
 
-  
-
   const handleDelete = () => {
-    deleteUser(id, {
+    deleteUser(id as string, {
         onSuccess: () => router.push("/users")
     })
     setShowDeleteModal(false);
@@ -168,3 +166,5 @@ export const UserProfilePage = ({ params }: { params: Promise<{ id: string }> })
     </div>
   );
 };
+ 
+export default UserProfilePage;
