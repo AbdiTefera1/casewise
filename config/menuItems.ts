@@ -9,7 +9,8 @@ import {
   FaCog,
   FaBell,
   FaQuestionCircle,
-  FaUserPlus
+  FaUserPlus,
+  FaFile
 } from 'react-icons/fa';
 import { GoOrganization } from "react-icons/go";
 import { BsFillGridFill } from "react-icons/bs";
@@ -79,6 +80,13 @@ export const MENU_ITEMS: MenuItem[] = [
     icon: FaBalanceScale,
     label: 'Lawyers',
     href: '/lawyers',
+    roles: [UserRole.ADMIN]
+  },
+  {
+    id: 'documents',
+    icon: FaFile,
+    label: 'Documents',
+    href: '/documents',
     roles: [UserRole.ADMIN]
   },
   {

@@ -2,7 +2,7 @@
 import api from './config';
 
 export enum DocumentCategory {
-  LEGAL_BRIEF = 'LEGAL_BRIEF',
+  PLEADING = 'PLEADING',
   COURT_ORDER = 'COURT_ORDER',
   CONTRACT = 'CONTRACT',
   EVIDENCE = 'EVIDENCE',
@@ -10,6 +10,15 @@ export enum DocumentCategory {
   BILLING = 'BILLING',
   OTHER = 'OTHER'
 }
+// export enum DocumentCategory {
+//   LEGAL_BRIEF = 'LEGAL_BRIEF',
+//   COURT_ORDER = 'COURT_ORDER',
+//   CONTRACT = 'CONTRACT',
+//   EVIDENCE = 'EVIDENCE',
+//   CORRESPONDENCE = 'CORRESPONDENCE',
+//   BILLING = 'BILLING',
+//   OTHER = 'OTHER'
+// }
 
 export interface Document {
   id: string;
@@ -29,6 +38,7 @@ export interface Document {
   case: {
     id: string;
     title: string;
+    caseNumber: string;
   };
   uploadedBy: {
     id: string;
@@ -80,6 +90,12 @@ export const documentApi = {
   }) => {
     const { data } = await api.get<{
       documents: Document[];
+      pagination: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+  }
       total: number;
       page: number;
       limit: number;
