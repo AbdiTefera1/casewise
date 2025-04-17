@@ -24,6 +24,7 @@ export interface Document {
   id: string;
   title: string;
   description?: string;
+  downloadUrl: string;
   category: DocumentCategory;
   fileName: string;
   fileSize: number;
@@ -104,7 +105,7 @@ export const documentApi = {
   },
 
   getDocument: async (id: string) => {
-    const { data } = await api.get<Document>(`${CASES_ENDPOINT}/${id}`);
+    const { data } = await api.get<{document: Document}>(`${CASES_ENDPOINT}/${id}`);
     return data;
   },
 
@@ -118,6 +119,18 @@ export const documentApi = {
       total: number;
     }>(`${CASES_ENDPOINT}/case/${caseId}`, { params });
     return data;
+  },
+
+  downloadDocument: async (filePath: string) => {
+    const response = await api.get<Blob>(`${CASES_ENDPOINT}/download/${filePath}`, {
+      responseType: 'blob', // Ensure the response is treated as a file
+    });
+
+    if (!response) {
+      throw new Error('Download failed');
+    }
+
+    return response;
   },
 
   deleteDocument: async (id: string) => {

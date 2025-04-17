@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import ReactQueryProvider from '@/lib/ReactQueryProvider';
+import { Toaster } from "react-hot-toast";
 // import Navbar from "@/components/navigation/Navbar";
 
 const geistSans = localFont({
@@ -32,7 +33,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {/* <Navbar/> */}
+        
         <ReactQueryProvider>
+        <Toaster position="top-right" />
           {children}
         </ReactQueryProvider>
       </body>

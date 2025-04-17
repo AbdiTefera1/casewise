@@ -1,11 +1,15 @@
 "use client";
 
 import { useState } from 'react';
-import { FaSearch, FaFilter, FaFilePdf, FaFileWord, FaFileExcel, FaFileImage, FaSortAmountDown, FaCalendarAlt, FaUser, FaBalanceScale } from 'react-icons/fa';
-import { useDocuments } from '@/hooks/useDocuments';
+import { FaSearch, FaFilter, FaFilePdf, FaFileWord, FaFileExcel, FaFileImage, FaSortAmountDown, FaCalendarAlt, FaUser, FaBalanceScale, FaSpinner, FaDownload, FaEye } from 'react-icons/fa';
+import { useDocuments, useDownloadDocument } from '@/hooks/useDocuments';
 import { DocumentCategory } from '@/lib/api/documents';
+import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 
 const ListDocumentsPage = () => {
+    const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const downloadDocumentMutation = useDownloadDocument();
   const [filters, setFilters] = useState({
     page: 1,
     limit: 10,
@@ -15,7 +19,27 @@ const ListDocumentsPage = () => {
     endDate: undefined as Date | undefined,
   });
 
-  const { data, isLoading } = useDocuments(filters as any);
+  const { data, isLoading } = useDocuments(filters);
+
+  const handleDownload = async (documentId: string, fileName: string, storagePath: string) => {
+    try {
+      setDownloadingId(documentId);
+      
+      await downloadDocumentMutation.mutateAsync(storagePath, {
+        onSuccess: () => {
+          toast.success(`Downloading ${fileName}...`);
+        },
+        onError: (error) => {
+          toast.error(error instanceof Error ? error.message : 'Failed to download file');
+        }
+      });
+    } catch (error) {
+      console.error('Download error:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to download file');
+    } finally {
+      setDownloadingId(null);
+    }
+  };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters(prev => ({ ...prev, search: e.target.value, page: 1 }));
@@ -65,9 +89,9 @@ const ListDocumentsPage = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <h1 className="text-2xl font-bold">Case Documents</h1>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+        <Link href={`/documents/upload`} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
           Upload Document
-        </button>
+        </Link>
       </div>
 
       {/* Filters */}
@@ -168,13 +192,24 @@ const ListDocumentsPage = () => {
             </div>
 
             <div className="mt-4 flex items-center justify-between">
-              <a
-                href={document.storageUrl}
-                download
-                className="text-blue-600 hover:text-blue-800"
+              <button
+                onClick={() => handleDownload(document.id, document.fileName, document.storagePath)}
+                disabled={downloadingId === document.id || downloadDocumentMutation.isLoading}
+                className="text-blue-600 hover:text-blue-800 flex items-center gap-2"
               >
-                Download
-              </a>
+                {downloadingId === document.id || downloadDocumentMutation.isLoading ? (
+                  <>
+                    <FaSpinner className="animate-spin" />
+                    Downloading...
+                  </>
+                ) : (
+                  <>
+                    <FaDownload />
+                    Download
+                  </>
+                )}
+              </button>
+              <Link className='font-medium text-blue-500' href={`/documents/${document.id}`}><FaEye/></Link>
               <span className="text-sm text-gray-500">
                 {formatFileSize(document.fileSize)}
               </span>

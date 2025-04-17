@@ -56,12 +56,14 @@ export async function GET(
       );
     }
 
-    // const downloadUrl = await storage.getSignedUrl(document.storagePath, 3600); // 1 hour expiry
+    // const downloadUrl = await storage.getFilePath(document.storagePath); // 1 hour expiry
+    const { apiUrl } = await storage.getFilePath(document.storagePath);
 
+    // console.log('Download URL:', downloadUrl);
     return NextResponse.json({
       document: {
         ...document,
-        // downloadUrl
+        downloadUrl: apiUrl,
       }
     });
     

@@ -41,8 +41,22 @@ export const storage = {
       }
     }
   },
-
-  async getFilePath(fileName: string) {
-    return path.join(UPLOAD_DIR, fileName);
+  async getFilePath(filePath: string) {
+    // Convert storagePath to filesystem path
+    const fullPath = path.join(UPLOAD_DIR, filePath);
+    
+    // Verify file exists
+    if (!existsSync(fullPath)) {
+      throw new Error('File not found');
+    }
+    
+    // Return both the full path and API route
+    return {
+      absolutePath: fullPath,
+      apiUrl: `/api/documents/file/${filePath}`
+    };
   }
+  // async getFilePath(fileName: string) {
+  //   return path.join(UPLOAD_DIR, fileName);
+  // }
 };

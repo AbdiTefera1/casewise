@@ -38,6 +38,25 @@ export function useDocuments(params?: Parameters<typeof documentApi.getDocuments
       },
     });
   }
+
+  export function useDownloadDocument() {
+    return useMutation({
+      mutationFn: (filePath: string) => documentApi.downloadDocument(filePath),
+      onSuccess: (data, filePath) => {
+        const url = window.URL.createObjectURL(new Blob([data.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filePath.split('/').pop() || 'document');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      },
+      onError: () => {
+        alert('Failed to download document');
+      },
+    });
+  }
   
   export function useDeleteDocument() {
     const queryClient = useQueryClient();
