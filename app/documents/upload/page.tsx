@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
-import { useUploadDocument } from '@/hooks/useDocuments';
-import { useCases } from '@/hooks/useCases';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, X, File, FileText, Image, Package } from 'lucide-react';
-import { DocumentCategory } from '@/lib/api/documents';
+import { useState, useRef } from "react";
+import NextImage from "next/image";
+import { useUploadDocument } from "@/hooks/useDocuments";
+import { useCases } from "@/hooks/useCases";
+import { motion, AnimatePresence } from "framer-motion";
+import { Upload, X, File, FileText, Image as ImageIcon, Package } from "lucide-react";
+import { DocumentCategory } from "@/lib/api/documents";
 
 export default function UploadDocumentPage() {
   const [dragActive, setDragActive] = useState(false);
@@ -81,7 +82,7 @@ export default function UploadDocumentPage() {
 
   const getFileIcon = () => {
     if (!selectedFile) return <Upload className="w-12 h-12 text-gray-400" />;
-    if (selectedFile.type.startsWith('image/')) return <Image className="w-12 h-12 text-blue-500" />;
+    if (selectedFile.type.startsWith('image/')) return <ImageIcon className="w-12 h-12 text-blue-500" />;
     if (selectedFile.type.includes('pdf')) return <FileText className="w-12 h-12 text-red-500" />;
     return <File className="w-12 h-12 text-gray-500" />;
   };
@@ -160,13 +161,16 @@ export default function UploadDocumentPage() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="mt-4"
+                className="mt-4 flex justify-center"
               >
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="max-h-48 mx-auto rounded-lg"
-                />
+                <div className="relative h-48 w-48">
+                  <NextImage
+                    src={preview}
+                    alt="Selected file preview"
+                    fill
+                    className="object-contain rounded-lg"
+                  />
+                </div>
               </motion.div>
             )}
           </div>

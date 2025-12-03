@@ -44,11 +44,11 @@ export async function GET(
       );
     }
 
-    const fullPath = await storage.getFilePath(filePath);
+    const { absolutePath } = await storage.getFilePath(filePath);
     
     // Verify file exists
     try {
-      await stat(fullPath);
+      await stat(absolutePath);
     } catch {
       return NextResponse.json(
         { error: 'File not found' },
@@ -57,7 +57,7 @@ export async function GET(
     }
 
     // Create read stream
-    const stream = createReadStream(fullPath);
+    const stream = createReadStream(absolutePath);
 
     // Return file stream
     return new NextResponse(stream as any, {

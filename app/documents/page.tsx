@@ -194,10 +194,10 @@ const ListDocumentsPage = () => {
             <div className="mt-4 flex items-center justify-between">
               <button
                 onClick={() => handleDownload(document.id, document.fileName, document.storagePath)}
-                disabled={downloadingId === document.id || downloadDocumentMutation.isLoading}
+                disabled={downloadingId === document.id || downloadDocumentMutation.isPending}
                 className="text-blue-600 hover:text-blue-800 flex items-center gap-2"
               >
-                {downloadingId === document.id || downloadDocumentMutation.isLoading ? (
+                {downloadingId === document.id || downloadDocumentMutation.isPending ? (
                   <>
                     <FaSpinner className="animate-spin" />
                     Downloading...

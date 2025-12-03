@@ -29,10 +29,10 @@ export async function GET(
       );
     }
 
-    const fileStream = fs.createReadStream(filePath);
+    const fileStream: fs.ReadStream = fs.createReadStream(filePath);
     const stats = fs.statSync(filePath);
     
-    return new NextResponse(fileStream as any, {
+    return new NextResponse(fileStream as unknown as BodyInit, {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Length': stats.size.toString(),
