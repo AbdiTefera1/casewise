@@ -1,75 +1,140 @@
-"use client"
+"use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from "react";
+import { Menu, X, Zap } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const navItems = [
+    { name: "Home", href: "#" },
+    { name: "Features", href: "#features" },
+    { name: "Benefits", href: "#benefits" },
+    { name: "Pricing", href: "#pricing" },
+    { name: "Blog", href: "#blog" },
+    { name: "Contact", href: "#contact" },
+  ];
 
   return (
-    <nav className="bg-white shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          <div className="flex-shrink-0">
-            <span className="font-bold text-xl">Casewise</span>
-          </div>
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-center space-x-4">
-              <a href="#" className="text-gray-700 hover:text-gray-900">Home</a>
-              <a href="#" className="text-gray-700 hover:text-gray-900">Features</a>
-              <a href="#" className="text-gray-700 hover:text-gray-900">Pricing</a>
-              <a href="#" className="text-gray-700 hover:text-gray-900">About Us</a>
-              <a href="#" className="text-gray-700 hover:text-gray-900">Resources</a>
-              <a href="#" className="text-gray-700 hover:text-gray-900">Support</a>
-              <a href="/login" className="bg-blue-600 text-white px-4 py-2 rounded-md">Get Started</a>
+    <>
+      {/* Navbar */}
+      <nav
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? "bg-white/80 backdrop-blur-xl shadow-lg border-b border-white/20"
+            : "bg-transparent"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo */}
+            <div className="flex items-center">
+              <div className="relative">
+                <Zap className="h-9 w-9 text-blue-600 drop-shadow-lg" />
+                <div className="absolute inset-0 bg-blue-600/30 blur-2xl scale-150 -z-10" />
+              </div>
+              <span className="ml-3 text-3xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Casewise
+              </span>
             </div>
-          </div>
-          <div className="md:hidden flex items-center">
+
+            {/* Desktop Menu */}
+            <div className="hidden lg:flex items-center space-x-8 space-x-1">
+              {navItems.map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="relative px-5 py-3 text-gray-700 font-medium text-sm tracking-wide hover:text-gray-900 transition-colors duration-300 group"
+                >
+                  {item.name}
+                  <span className="absolute left-4 right-4 bottom-1 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-400 origin-left rounded-full" />
+                </a>
+              ))}
+
+              <a
+                href="/login"
+                className="ml-8 relative overflow-hidden px-8 py-4 font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-2xl hover:shadow-blue-500/25 transform hover:-translate-y-1 transition-all duration-300"
+              >
+                <span className="relative z-10">Get Started Free</span>
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+              </a>
+            </div>
+
+            {/* Mobile Menu Button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              type="button"
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
-              aria-expanded="false"
+              className="lg:hidden p-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all duration-300"
             >
-              <span className="sr-only">Open main menu</span>
-              {/* Icon when menu is closed. */}
-              <svg
-                className={`${isOpen ? 'hidden' : 'block'} h-6 w-6`}
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-              {/* Icon when menu is open. */}
-              <svg
-                className={`${isOpen ? 'block' : 'hidden'} h-6 w-6`}
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              {isOpen ? (
+                <X className="h-7 w-7 text-gray-800" />
+              ) : (
+                <Menu className="h-7 w-7 text-gray-800" />
+              )}
             </button>
           </div>
         </div>
-      </div>
+      </nav>
 
-      {/* Mobile menu, toggle className based on menu state. */}
-      <div className={`${isOpen ? 'block' : 'hidden'} md:hidden`}>
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <a href="#" className="block text-gray-700 hover:text-gray-900">Home</a>
-          <a href="#" className="block text-gray-700 hover:text-gray-900">Features</a>
-          <a href="#" className="block text-gray-700 hover:text-gray-900">Pricing</a>
-          <a href="#" className="block text-gray-700 hover:text-gray-900">About Us</a>
-          <a href="#" className="block text-gray-700 hover:text-gray-900">Resources</a>
-          <a href="#" className="block text-gray-700 hover:text-gray-900">Support</a>
-          <a href="/login" className="block bg-blue-600 text-white px-4 py-2 rounded-md">Get Started</a>
+      {/* Mobile Slide-In Menu */}
+      <div
+        className={`fixed inset-y-0 right-0 w-full max-w-sm bg-white/95 backdrop-blur-2xl shadow-2xl transform transition-all duration-500 ease-in-out z-50 ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        } lg:hidden`}
+      >
+        <div className="flex flex-col h-full">
+          {/* Top glow effect */}
+          <div className="h-1 bg-gradient-to-r from-blue-600 to-purple-600" />
+
+          <div className="flex-1 overflow-y-auto pt-24 pb-10 px-8">
+            <div className="space-y-2">
+              {navItems.map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className="block py-5 px-6 text-xl font-semibold text-gray-800 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 rounded-2xl transition-all duration-300 transform hover:translate-x-3"
+                >
+                  {item.name}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* CTA at bottom */}
+          <div className="p-8 border-t border-gray-100">
+            <a
+              href="/login"
+              onClick={() => setIsOpen(false)}
+              className="block w-full text-center py-5 px-8 text-xl font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-2xl hover:shadow-purple-500/30 transform hover:scale-105 transition-all duration-300"
+            >
+              Get Started Free
+            </a>
+            <p className="text-center text-gray-500 mt-4 font-medium">
+              No credit card needed • 14-day trial
+            </p>
+          </div>
         </div>
       </div>
-    </nav>
+
+      {/* Dark overlay when mobile menu open */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-500"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Spacer for fixed navbar */}
+      <div className="h-20" />
+    </>
   );
 }

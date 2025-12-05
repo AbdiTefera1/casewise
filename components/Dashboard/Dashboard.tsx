@@ -1,128 +1,219 @@
 "use client";
 
-import { useState } from 'react';
-import { useAuthStore } from '@/zustand/auth';
-import { useTasks } from '@/hooks/useTasks';
-import { useCases } from '@/hooks/useCases';
-import { PageHeader } from './PageHeader';
-import StatCard from './StatCard';
-import CasesTable from '../Cases/CasesTable';
-import TaskList from '../Tasks/TaskList';
-import { UserRole } from '@prisma/client';
-import { FaPlus } from 'react-icons/fa';
+import { useState } from "react";
+import type { ReactNode } from "react";
+import { useAuthStore } from "@/zustand/auth";
+import { useTasks } from "@/hooks/useTasks";
+import { useCases } from "@/hooks/useCases";
+import { UserRole } from "@prisma/client";
+import {
+  FileText,
+  AlertCircle,
+  Users,
+  Plus,
+  Calendar,
+  Clock,
+  CheckCircle2,
+  Timer,
+  TrendingUp,
+  Sparkles,
+} from "lucide-react";
+import CasesTable from "../Cases/CasesTable";
+import TaskList from "../Tasks/TaskList";
 
 export const Dashboard = () => {
   const { user } = useAuthStore();
   const [currentPage, setCurrentPage] = useState(1);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [limit, setLimit] = useState(5);
+  const limit = 8;
 
   const { data: tasksData, isLoading: tasksLoading } = useTasks();
+  const { data, isLoading: casesLoading } = useCases({ page: currentPage, limit });
+
   const tasks = tasksData?.tasks || [];
-  const { data, isLoading } = useCases({ page: currentPage, limit });
   const cases = data?.cases || [];
-  const pagination = data?.pagination ?? { page: 1, totalPages: 1 };
+  const pagination = data?.pagination || { page: 1, totalPages: 1 };
 
   const stats = {
     totalCases: cases.length,
-    archivedCases: cases.filter((c) => c.status === 'ARCHIVED').length,
-    importantCases: cases.filter((c) => c.priority === 'HIGH' || c.priority === 'URGENT' || c.status === 'ACTIVE').length,
+    activeCases: cases.filter((c) => c.status === "ACTIVE").length,
+    urgentCases: cases.filter((c) => c.priority === "URGENT").length,
+    overdueTasks: tasks.filter((t) => t.deadline && new Date(t.deadline) < new Date() && t.status !== "COMPLETED").length,
     totalClients: [...new Set(cases.map((c) => c.clientId))].length,
+    completedThisWeek: tasks.filter((t) => {
+      const taskDate = new Date(t.createdAt);
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      return t.status === "COMPLETED" && taskDate > weekAgo;
+    }).length,
   };
 
-  if (tasksLoading || isLoading) {
+  if (casesLoading || tasksLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="relative">
+            <div className="h-20 w-20 rounded-full border-4 border-gray-200"></div>
+            <div className="absolute inset-0 h-20 w-20 rounded-full border-4 border-t-blue-600 border-r-purple-600 border-b-pink-600 border-l-transparent animate-spin"></div>
+          </div>
+          <p className="mt-6 text-lg font-medium text-gray-600">Loading your dashboard...</p>
+        </div>
       </div>
     );
   }
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const recentTasks = tasks.slice(0, 5);
+  const recentTasks = tasks.slice(0, 6);
 
   return (
-    <div className="min-h-screen">
-      <PageHeader title="Dashboard">
-        <button className="bg-[#1D4ED8] text-white font-medium flex items-center p-1 rounded-md">
-          <FaPlus className="mr-2" />
-          New Case
-        </button>
-      </PageHeader>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
+      {/* Header */}
+      <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Welcome back, {user?.name?.split(" ")[0] || "User"}
+            </h1>
+            <p className="text-gray-600 mt-1">Here&apos;s what&apos;s happening in your firm today</p>
+          </div>
 
-      <div className="p-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <StatCard 
-            title="Cases" 
-            subtitle= "Total cases"
-            count={stats.totalCases} 
-            icon={<svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
-            </svg>} 
+          <button className="group relative inline-flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl hover:shadow-purple-500/30 transform hover:-translate-y-1 transition-all duration-300">
+            <Plus className="h-5 w-5 group-hover:rotate-90 transition-transform duration-500" />
+            New Case
+            <div className="absolute inset-0 bg-white/20 rounded-2xl scale-0 group-hover:scale-100 transition-transform duration-500" />
+          </button>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-10">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-10">
+          <StatCard
+            icon={<FileText className="h-8 w-8" />}
+            title="Total Cases"
+            value={stats.totalCases}
+            subtitle="Active Cases"
+            gradient="from-blue-500 to-cyan-500"
           />
-          <StatCard 
-            title="Archived" 
-            subtitle="Total completed cases" 
-            count={stats.archivedCases} 
-            icon={<svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-            </svg>} 
+          <StatCard
+            icon={<AlertCircle className="h-8 w-8" />}
+            title="Urgent"
+            value={stats.urgentCases}
+            subtitle="Need Attention"
+            gradient="from-red-500 to-pink-500"
+            pulse={stats.urgentCases > 0}
           />
-          <StatCard 
-            title="Important Cases" 
-            subtitle="Total important cases" 
-            count={stats.importantCases} 
-            icon={<svg className="w-12 h-12 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-            </svg>} 
+          <StatCard
+            icon={<Timer className="h-8 w-8" />}
+            title="Overdue"
+            value={stats.overdueTasks}
+            subtitle="Tasks"
+            gradient="from-orange-500 to-red-500"
+            pulse={stats.overdueTasks > 0}
           />
-          <StatCard 
-            title="Clients" 
-            subtitle="Total clients" 
-            count={stats.totalClients} 
-            icon={<svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>} 
+          <StatCard
+            icon={<Users className="h-8 w-8" />}
+            title="Clients"
+            value={stats.totalClients}
+            subtitle="This Month"
+            gradient="from-purple-500 to-indigo-500"
+          />
+          <StatCard
+            icon={<CheckCircle2 className="h-8 w-8" />}
+            title="Completed"
+            value={stats.completedThisWeek}
+            subtitle="This Week"
+            gradient="from-emerald-500 to-teal-500"
+          />
+          <StatCard
+            icon={<TrendingUp className="h-8 w-8" />}
+            title="Win Rate"
+            value="87%"
+            subtitle="Last 30 days"
+            gradient="from-green-500 to-emerald-600"
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Recent Cases */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow">
-              <div className="p-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold">Recent Cases</h2>
+            <div className="bg-white rounded-3xl shadow-xl ring-1 ring-gray-100 overflow-hidden">
+              <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Recent Cases</h2>
+                  <p className="text-gray-500">Your most active matters</p>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <Calendar className="h-4 w-4" />
+                  Updated {new Date().toLocaleDateString()}
+                </div>
               </div>
-              <CasesTable cases={cases} userRole={user?.role as UserRole} />
-              <div className="flex justify-between p-4">
+
+              <div className="overflow-x-auto">
+                <CasesTable cases={cases} userRole={user?.role as UserRole} />
+              </div>
+
+              {/* Pagination */}
+              <div className="px-8 py-5 border-t border-gray-100 flex items-center justify-between">
                 <button
-                  className="btn-secondary"
-                  onClick={() => handlePageChange(currentPage - 1)}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
+                  className="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition"
                 >
                   Previous
                 </button>
-                <span>
-                  Page {pagination.page} of {pagination.totalPages}
+
+                <span className="text-sm font-medium text-gray-600">
+                  Page <span className="text-blue-600 font-bold">{pagination.page}</span> of{" "}
+                  <span className="text-purple-600 font-bold">{pagination.totalPages}</span>
                 </span>
+
                 <button
-                  className="btn-secondary"
-                  onClick={() => handlePageChange(currentPage + 1)}
+                  onClick={() => setCurrentPage((p) => p + 1)}
                   disabled={currentPage === pagination.totalPages}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition"
                 >
                   Next
                 </button>
               </div>
             </div>
           </div>
-          <div>
-            <div className="bg-white rounded-lg shadow">
-              <div className="p-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold">Recent Tasks</h2>
+
+          {/* Tasks Sidebar */}
+          <div className="space-y-6">
+            {/* Upcoming Tasks */}
+            <div className="bg-white rounded-3xl shadow-xl ring-1 ring-gray-100 p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-gray-900 flex items-center gap-3">
+                  <Clock className="h-6 w-6 text-blue-600" />
+                  Upcoming Tasks
+                </h3>
+                {stats.overdueTasks > 0 && (
+                  <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-bold animate-pulse">
+                    {stats.overdueTasks} overdue
+                  </span>
+                )}
               </div>
               <TaskList tasks={recentTasks} userRole={user?.role as UserRole} />
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-3xl p-8 text-white shadow-2xl">
+              <Sparkles className="h-10 w-10 mb-4 opacity-80" />
+              <h3 className="text-2xl font-bold mb-3">Need to act fast?</h3>
+              <p className="text-white/90 mb-6">
+                Create a new case, add a client, or schedule a hearing in seconds.
+              </p>
+              <div className="space-y-3">
+                <button className="w-full py-3 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-xl font-medium transition">
+                  + New Client
+                </button>
+                <button className="w-full py-3 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-xl font-medium transition">
+                  + Schedule Hearing
+                </button>
+                <button className="w-full py-3 bg-white text-purple-600 font-bold rounded-xl hover:bg-gray-100 transition">
+                  View Calendar
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -130,3 +221,33 @@ export const Dashboard = () => {
     </div>
   );
 };
+
+// Reusable StatCard Component
+interface StatCardProps {
+  icon: ReactNode;
+  title: string;
+  value: string | number;
+  subtitle: string;
+  gradient: string;
+  pulse?: boolean;
+}
+
+const StatCard = ({ icon, title, value, subtitle, gradient, pulse = false }: StatCardProps) => (
+  <div
+    className={`relative overflow-hidden rounded-3xl bg-white p-6 shadow-lg ring-1 ring-gray-100 transition-all hover:shadow-2xl hover:-translate-y-1 ${pulse ? "animate-pulse" : ""
+      }`}
+  >
+    <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-5`} />
+    <div className="relative z-10">
+      <div className="flex items-center justify-between mb-4">
+        <div className={`p-3 rounded-2xl bg-gradient-to-br ${gradient} text-white shadow-lg`}>
+          {icon}
+        </div>
+        {pulse && <div className="h-3 w-3 bg-red-500 rounded-full animate-ping" />}
+      </div>
+      <p className="text-3xl font-black text-gray-900">{value}</p>
+      <p className="text-sm text-gray-500 mt-1">{subtitle}</p>
+      <p className="text-xs text-gray-400 mt-2">{title}</p>
+    </div>
+  </div>
+);
