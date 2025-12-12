@@ -100,7 +100,7 @@ export default function Benefits() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16 lg:mb-24"
         >
-          <div className="inline-flex items-center gap-3 bg-blue-50 text-blue-700 px-6 py-3 rounded-full text-sm font-semibold mb-6">
+          <div className="inline-flex items-center gap-3 bg-blue-50 text-green-700 px-6 py-3 rounded-full text-sm font-semibold mb-6">
             <Sparkles className="h-5 w-5" />
             The Modern Law Firm Advantage
           </div>
@@ -108,15 +108,15 @@ export default function Benefits() {
           <h2 className="text-5xl lg:text-6xl font-black text-gray-900 leading-tight">
             Stop Surviving.
             <br />
-            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#00a79d] to-[#5eb8e5] bg-clip-text text-transparent">
               Start Thriving.
             </span>
           </h2>
 
           <p className="mt-6 text-xl text-gray-600 max-w-3xl mx-auto">
             Lawyers using Casewise report{" "}
-            <span className="font-bold text-blue-600">47% less stress</span> and{" "}
-            <span className="font-bold text-purple-600">32% more billable hours</span>.
+            <span className="font-bold text-[#00a79d]">47% less stress</span> and{" "}
+            <span className="font-bold text-[#5eb8e5]">32% more billable hours</span>.
           </p>
         </motion.div>
 
@@ -174,12 +174,12 @@ export default function Benefits() {
           className="text-center mt-20"
         >
           <p className="text-2xl font-semibold text-gray-700 mb-8">
-            Ready to focus on what matters: <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">winning cases</span>
+            Ready to focus on what matters: <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00a79d] to-[#5eb8e5]">winning cases</span>
           </p>
 
           <a
             href="/login"
-            className="inline-flex items-center gap-4 px-12 py-6 text-xl font-bold text-white bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-3xl shadow-2xl hover:shadow-purple-500/40 transform hover:-translate-y-2 transition-all duration-300 group"
+            className="inline-flex items-center gap-4 px-12 py-6 text-xl font-bold text-white bg-gradient-to-r from-[#00a79d] to-[#5eb8e5] rounded-3xl shadow-2xl hover:shadow-purple-500/40 transform hover:-translate-y-2 transition-all duration-300 group"
           >
             <Sparkles className="h-7 w-7" />
             Start Your Free 14-Day Trial

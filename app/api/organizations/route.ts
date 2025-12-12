@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
       prisma.organization.count({ where })
     ]);
 
-    console.log("Organizations list: ", organizations)
+    // console.log("Organizations list: ", organizations)
 
     return NextResponse.json({
       organizations,

@@ -11,12 +11,7 @@ import Footer from '@/components/Footer'
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
-      {/* <Head>
-        <title>Legal Case Management Solution</title>
-        <meta name="description" content="Simplify your legal practice" />
-      </Head> */}
-      
+    <div className="min-h-screen bg-white">      
       <Navbar />
       <Hero />
       <Features />

@@ -11,9 +11,9 @@ export default function Hero() {
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 pt-32 pb-20 lg:pt-44 lg:pb-32">
         {/* Background Decorations */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-gradient-to-br from-blue-400/30 to-purple-600/20 blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-gradient-to-tr from-pink-400/20 to-blue-600/20 blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-600/10 blur-3xl animate-pulse" />
+          <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-gradient-to-br from-green-400/30 to-purple-600/20 blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-gradient-to-tr from-pink-400/20 to-green-600/20 blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-gradient-to-r from-green-500/10 to-purple-600/10 blur-3xl animate-pulse" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
@@ -38,7 +38,7 @@ export default function Hero() {
               transition={{ duration: 0.8, delay: 0.1 }}
               className="block text-5xl sm:text-6xl lg:text-7xl font-black font-extrabold tracking-tight"
             >
-              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#00a79d] to-[#5eb8e5] bg-clip-text text-transparent">
                 Run Your Law Firm
               </span>
               <br />
@@ -53,7 +53,7 @@ export default function Hero() {
               className="mt-8 text-xl sm:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed"
             >
               The all-in-one case management platform that saves you{" "}
-              <span className="font-bold text-blue-600">10+ hours per week</span> on admin work.
+              <span className="font-bold text-[#00a79d]">10+ hours per week</span> on admin work.
               <br className="hidden sm:block" />
               Focus on winning cases — let Casewise handle the rest.
             </motion.p>
@@ -67,7 +67,7 @@ export default function Hero() {
             >
               <a
                 href="/login"
-                className="group relative inline-flex items-center justify-center px-10 py-5 text-lg font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-2xl hover:shadow-purple-500/30 transform hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+                className="group relative inline-flex items-center justify-center px-10 py-5 text-lg font-bold text-white bg-gradient-to-r from-[#00a79d] to-[#5eb8e5] rounded-2xl shadow-2xl hover:shadow-purple-500/30 transform hover:-translate-y-1 transition-all duration-300 overflow-hidden"
               >
                 <span className="relative z-10 flex items-center gap-3">
                   Start Free Trial
@@ -131,7 +131,7 @@ export default function Hero() {
 
             {/* Floating elements */}
             <div className="absolute -top-10 -left-10 animate-bounce">
-              <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-4 rounded-2xl shadow-xl">
+              <div className="bg-gradient-to-br from-[#00a79d] to-[#5eb8e5] p-4 rounded-2xl shadow-xl">
                 <div className="h-12 w-12 bg-white/20 rounded-lg" />
               </div>
             </div>

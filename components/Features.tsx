@@ -80,7 +80,7 @@ export default function Features() {
         >
           <h2 className="text-5xl lg:text-6xl font-black text-gray-900">
             Built for Lawyers
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#00a79d] to-[#5eb8e5]">
               Who Win
             </span>
           </h2>
@@ -107,7 +107,7 @@ export default function Features() {
                 whileHover={{ y: -12, transition: { duration: 0.3 } }}
                 className="group relative"
               >
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur-xl opacity-30 group-hover:opacity-60 transition duration-500" />
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#00a79d] to-[#5eb8e5] rounded-3xl blur-xl opacity-30 group-hover:opacity-60 transition duration-500" />
 
                 <div className="relative bg-white rounded-3xl p-8 shadow-xl ring-1 ring-gray-100 hover:ring-gray-200 transition-all duration-500 h-full">
                   {/* Icon with Gradient Background */}
@@ -144,11 +144,11 @@ export default function Features() {
           className="text-center mt-20"
         >
           <p className="text-lg text-gray-600 mb-8">
-            Join 5,000+ attorneys already saving <span className="font-bold text-blue-600">47 hours per month</span>
+            Join 5,000+ attorneys already saving <span className="font-bold text-[#00a79d]">47 hours per month</span>
           </p>
           <a
             href="/login"
-            className="inline-flex items-center gap-3 px-10 py-5 text-xl font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-2xl hover:shadow-purple-2xl hover:shadow-purple-500/40 transform hover:-translate-y-1 transition-all duration-300"
+            className="inline-flex items-center gap-3 px-10 py-5 text-xl font-bold text-white bg-gradient-to-r from-[#00a79d] to-[#5eb8e5] rounded-2xl shadow-2xl hover:shadow-purple-2xl hover:shadow-purple-500/40 transform hover:-translate-y-1 transition-all duration-300"
           >
             Start Winning More Time
             <ArrowRight className="h-6 w-6 group-hover:translate-x-2 transition" />

@@ -90,14 +90,14 @@ export default function Blog() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16 lg:mb-24"
         >
-          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 px-6 py-3 rounded-full text-sm font-bold mb-6 shadow-lg">
+          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-50 to-purple-50 text-green-700 px-6 py-3 rounded-full text-sm font-bold mb-6 shadow-lg">
             <BookOpen className="h-5 w-5" />
             Thought Leadership from Casewise
           </div>
 
           <h2 className="text-5xl lg:text-6xl font-black text-gray-900 mb-6">
             The Lawyer&apos;s Playbook
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#00a79d] to-[#5eb8e5]">
               for Winning More
             </span>
           </h2>
@@ -179,7 +179,7 @@ export default function Blog() {
                 </div>
 
                 {/* Title */}
-                <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4 leading-tight group-hover:text-blue-600 transition-colors duration-300">
+                <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4 leading-tight group-hover:text-[#00a79d] transition-colors duration-300">
                   {post.title}
                 </h3>
 
@@ -192,14 +192,14 @@ export default function Blog() {
                 <motion.a
                   href={`/blog/${post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
                   whileHover={{ x: 8 }}
-                  className="inline-flex items-center gap-3 text-blue-600 font-semibold text-lg group/read"
+                  className="inline-flex items-center gap-3 text-[#00a79d] font-semibold text-lg group/read"
                 >
                   Read the full guide
                   <ExternalLink className="h-5 w-5 group-hover/read:translate-x-1 transition-transform" />
                 </motion.a>
 
                 {/* Bottom accent line */}
-                <div className="mt-8 h-1 w-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full" />
+                <div className="mt-8 h-1 w-20 bg-gradient-to-r from-[#00a79d] to-[#5eb8e5] rounded-full" />
               </div>
             </motion.article>
           ))}
@@ -224,7 +224,7 @@ export default function Blog() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <a
                 href="/login"
-                className="group inline-flex items-center gap-3 px-8 py-5 text-lg font-bold text-white bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl shadow-2xl hover:shadow-purple-500/40 transform hover:-translate-y-1 transition-all duration-300"
+                className="group inline-flex items-center gap-3 px-8 py-5 text-lg font-bold text-white bg-gradient-to-r from-[#00a79d] to-[#5eb8e5] rounded-2xl shadow-2xl hover:shadow-green-500/40 transform hover:-translate-y-1 transition-all duration-300"
               >
                 Start Free Trial
                 <Zap className="h-5 w-5 group-hover:translate-x-1 transition" />
@@ -255,7 +255,7 @@ export default function Blog() {
                     transition={{ delay: 0.6 + index * 0.1 }}
                     className="p-4"
                   >
-                    <Icon className="h-10 w-10 text-blue-600 mx-auto mb-2" />
+                    <Icon className="h-10 w-10 text-[300a79d] mx-auto mb-2" />
                     <div className="text-2xl font-bold text-gray-900">{stat.number}</div>
                     <div className="text-gray-600 text-sm">{stat.label}</div>
                   </motion.div>

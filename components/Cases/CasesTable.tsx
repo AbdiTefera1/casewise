@@ -50,7 +50,7 @@ const CasesTable = ({ cases, userRole }: CasesTableProps) => {
       <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-            <FileText className="h-7 w-7 text-blue-600" />
+            <FileText className="h-7 w-7 text-[#00a79d]" />
             Active Cases
           </h2>
           <p className="text-sm text-gray-500 mt-1">
@@ -128,7 +128,7 @@ const CasesTable = ({ cases, userRole }: CasesTableProps) => {
                   {/* Client */}
                   <td className="py-6 px-8">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00a79d] to-[#5eb8e5] flex items-center justify-center text-white font-bold">
                         {case_.client?.firstName?.[0]}{case_.client?.lastName?.[0]}
                       </div>
                       <div>
@@ -169,7 +169,7 @@ const CasesTable = ({ cases, userRole }: CasesTableProps) => {
                   <td className="py-6 px-8 text-right">
                     <div className="flex items-center justify-end gap-3">
                       <button
-                        className="p-2.5 rounded-xl bg-gray-50 hover:bg-blue-50 text-blue-600 hover:shadow-md transition-all group"
+                        className="p-2.5 rounded-xl bg-gray-50 hover:bg-blue-50 text-[#00a79d] hover:shadow-md transition-all group"
                         title="View Case"
                       >
                         <Eye className="h-5 w-5 group-hover:scale-110 transition-transform" />

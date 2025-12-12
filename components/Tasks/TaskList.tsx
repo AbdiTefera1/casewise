@@ -104,7 +104,7 @@ const TaskList = ({ tasks, userRole }: TaskListProps) => {
         </h3>
 
         {canManage && (
-          <button className="group flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all">
+          <button className="group flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#00a79d] to-[#5eb8e5] text-white font-medium rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all">
             <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform" />
             New Task
           </button>

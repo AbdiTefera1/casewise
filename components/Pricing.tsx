@@ -65,7 +65,7 @@ const card = {
 
 export default function Pricing() {
   return (
-    <section id="pricing" className="py-24 lg:py-32 bg-gradient-to-b from-white via-blue-50/30 to-white overflow-hidden">
+    <section id="pricing" className="py-24 lg:py-32 bg-gradient-to-b from-white via-green-50/30 to-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -74,7 +74,7 @@ export default function Pricing() {
           viewport={{ once: true }}
           className="text-center mb-16 lg:mb-24"
         >
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 px-5 py-2 rounded-full text-sm font-bold mb-6">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-100 to-purple-100 text-green-700 px-5 py-2 rounded-full text-sm font-bold mb-6">
             <Sparkles className="h-5 w-5" />
             Transparent Pricing • No Hidden Fees
           </div>
@@ -82,7 +82,7 @@ export default function Pricing() {
           <h2 className="text-5xl lg:text-6xl font-black text-gray-900">
             Choose the Perfect Plan
             <br />
-            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#00a79d] to-[#5eb8e5] bg-clip-text text-transparent">
               for Your Firm
             </span>
           </h2>
@@ -90,7 +90,7 @@ export default function Pricing() {
           <p className="mt-6 text-xl text-gray-600 max-w-3xl mx-auto">
             Join 5,000+ law firms already saving time and winning more cases.
             <br className="hidden sm:block" />
-            <span className="font-bold text-blue-600">14-day free trial</span> on all paid plans — no credit card required.
+            <span className="font-bold text-green-600">14-day free trial</span> on all paid plans — no credit card required.
           </p>
         </motion.div>
 
@@ -112,7 +112,7 @@ export default function Pricing() {
               {/* Popular Badge */}
               {plan.popular && (
                 <div className="absolute -top-5 left-1/2 -translate-x-1/2">
-                  <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full text-sm font-bold flex items-center gap-2 shadow-xl">
+                  <div className="bg-gradient-to-r from-[#00a79d] to-[#5eb8e5] text-white px-6 py-2 rounded-full text-sm font-bold flex items-center gap-2 shadow-xl">
                     <Zap className="h-5 w-5" />
                     MOST POPULAR
                   </div>
@@ -122,7 +122,7 @@ export default function Pricing() {
               <div
                 className={`relative h-full rounded-3xl p-8 lg:p-10 overflow-hidden transition-all duration-500 ${
                   plan.popular
-                    ? "bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-white shadow-2xl ring-4 ring-purple-600/30"
+                    ? "bg-gradient-to-br from-[#00a79d] to-[#5eb8e5] text-white shadow-2xl ring-4 ring-blue-600/30"
                     : "bg-white shadow-xl ring-1 ring-gray-200"
                 }`}
               >
@@ -179,8 +179,8 @@ export default function Pricing() {
                   whileTap={{ scale: 0.98 }}
                   className={`w-full block text-center py-5 px-8 rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg ${
                     plan.popular
-                      ? "bg-white text-purple-600 hover:bg-gray-100"
-                      : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-xl"
+                      ? "bg-white text-[#5eb8e5] hover:bg-gray-100"
+                      : "bg-gradient-to-r from-[#00a79d] to-[#5eb8e5] text-white hover:shadow-xl"
                   }`}
                 >
                   {plan.price === 0 ? "Get Started Free" : plan.price === "Custom" ? "Contact Sales" : "Start Free Trial"}
@@ -200,8 +200,8 @@ export default function Pricing() {
           className="mt-20 text-center"
         >
           <p className="text-lg text-gray-600 mb-6">
-            <span className="font-bold text-2xl text-blue-600">10,000+</span> cases managed •{" "}
-            <span className="font-bold text-purple-600">4.9/5</span> from 1,200+ reviews •{" "}
+            <span className="font-bold text-2xl text-[#00a79d]">10,000+</span> cases managed •{" "}
+            <span className="font-bold text-[#5eb8e5]">4.9/5</span> from 1,200+ reviews •{" "}
             <span className="font-bold text-green-600">Zero</span> missed court dates reported
           </p>
           <div className="flex justify-center items-center gap-8 flex-wrap">
