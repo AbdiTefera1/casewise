@@ -3,7 +3,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
-import { CaseStatus } from '@prisma/client';
+import { z } from 'zod';
+// import { CaseStatus } from '@prisma/client';
+
+
+const CaseStatusSchema = z.enum(['ACTIVE', 'INACTIVE', 'ARCHIVED']);
+type CaseStatus = z.infer<typeof CaseStatusSchema>;
 
 export async function GET(
     request: NextRequest,
