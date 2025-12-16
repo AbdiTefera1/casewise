@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, CheckCircle } from "lucide-react";
 import Image from "next/image";
-import dashboardPreview from "@/public/dashboard-preview.png";
+import dashboardPreview from "@/public/dashboard-prev.png";
 
 export default function Hero() {
   return (

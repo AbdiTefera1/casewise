@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
-import { validateLawyerRegistrationData } from '@/lib/validators';
+import { validateLawyerUpdateData } from '@/lib/validators';
 
 export async function GET(
   request: NextRequest,
@@ -93,49 +93,46 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params; 
+    const { id } = await params;
     const session = await auth(request);
-    
+
     if (session?.user.role !== 'ADMIN' && session?.user.id !== id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const data = await request.json();
-    
-    const validationResult = validateLawyerRegistrationData(data);
+
+    const validationResult = validateLawyerUpdateData(data);
     if (!validationResult.success) {
-      return NextResponse.json(
-        { error: validationResult.error },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: validationResult.error }, { status: 400 });
     }
 
-    const { lawyer: lawyerData, ...userData } = data;
+    // Extract only 'name' for user update; everything else goes to lawyer relation
+    const { name, ...lawyerFields } = data;
+
+    const updateData: any = {
+      ...(name !== undefined && { name }), // only update name if provided
+      lawyer: {
+        update: lawyerFields, // all other fields go here
+      },
+    };
 
     const updatedLawyer = await prisma.user.update({
       where: {
-        id: id,
+        id,
         organizationId: session.user.organizationId,
-        role: 'LAWYER'
+        role: 'LAWYER',
       },
-      data: {
-        ...userData,
-        lawyer: lawyerData ? {
-          update: lawyerData
-        } : undefined
-      },
+      data: updateData,
       include: {
-        lawyer: true
-      }
+        lawyer: true,
+      },
     });
 
     const { password: _, ...lawyerWithoutPassword } = updatedLawyer;
     return NextResponse.json({ lawyer: lawyerWithoutPassword });
-    
   } catch (error) {
+    console.error('Lawyer update error:', error); // Add this for debugging!
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

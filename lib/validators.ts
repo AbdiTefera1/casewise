@@ -109,54 +109,98 @@ export function validateCaseData(data: any) {
 }
 
 // Lawyer validator
-// Define the contact info schema
 const LawyerContactInfoSchema = z.object({
-  email: z.string().email(), // Email must be a valid email format
-  phone: z.string().optional(), // Phone is optional
-  address: z.object({
-    street: z.string(),
-    city: z.string(),
-    state: z.string(),
-    zipCode: z.string().length(5) // Assuming US zip code format
-  }).optional() // Address is optional
+  email: z.string().email({ message: 'Invalid email format' }),
+  phone: z.string().optional(),
+  address: z
+    .object({
+      street: z.string().min(1, { message: 'Street is required' }),
+      city: z.string().min(1, { message: 'City is required' }),
+      state: z.string().min(1, { message: 'State is required' }),
+      zipCode: z
+        .string()
+        .length(5, { message: 'Zip code must be exactly 5 digits' })
+        .regex(/^\d+$/, { message: 'Zip code must contain only digits' }),
+    })
+    .optional(),
 });
 
-// Define the availability schema
 const AvailabilitySchema = z.object({
-  daysAvailable: z.array(z.string()), // Array of available days
+  daysAvailable: z.array(z.string()),
   hoursAvailable: z.object({
-    from: z.string().regex(/^\d{2}:\d{2}$/), // Time format HH:mm
-    to: z.string().regex(/^\d{2}:\d{2}$/) // Time format HH:mm
-  })
+    from: z
+      .string()
+      .regex(/^\d{2}:\d{2}$/, { message: 'Time must be in HH:mm format (e.g., 09:00)' }),
+    to: z
+      .string()
+      .regex(/^\d{2}:\d{2}$/, { message: 'Time must be in HH:mm format (e.g., 17:00)' }),
+  }),
 });
 
-// Define the jurisdictions schema
 const JurisdictionsSchema = z.object({
-  regions: z.array(z.string()), // Array of regions (e.g., states)
-  countries: z.array(z.string()) // Array of countries
+  regions: z.array(z.string()),
+  countries: z.array(z.string()),
 });
 
-// Define the main Lawyer schema for registration
 const lawyerRegistrationSchema = z.object({
-  email: z.string().email(), // Valid email format
-  password: z.string().min(8), // Password must be at least 8 characters long
-  name: z.string(), // Lawyer's full name
-  specializations: z.array(z.string()), // Array of specializations
-  barNumber: z.string(), // Bar association number
-  licenseStatus: z.enum(['Active', 'Inactive']), // Enum for license status
-  jurisdictions: JurisdictionsSchema, // Jurisdictions object
-  hourlyRate: z.number().positive(), // Positive float for hourly rate
-  contactInfo: LawyerContactInfoSchema, // Contact info object
-  availability: AvailabilitySchema // Availability object
+  email: z.string().email({ message: 'Invalid email format' }),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters long' }),
+  name: z.string().min(1, { message: 'Name is required' }),
+  specializations: z.array(z.string()),
+  barNumber: z.string().min(1, { message: 'Bar number is required' }),
+  licenseStatus: z.enum(['Active', 'Inactive'], {
+    message: 'License status must be Active or Inactive',
+  }),
+  jurisdictions: JurisdictionsSchema,
+  hourlyRate: z
+    .number({ invalid_type_error: 'Hourly rate must be a number' })
+    .positive({ message: 'Hourly rate must be greater than 0' }),
+  contactInfo: LawyerContactInfoSchema,
+  availability: AvailabilitySchema,
 });
 
-// Function to validate lawyer registration data
+// Improved validation function with detailed field-specific errors
 export function validateLawyerRegistrationData(data: any) {
   const result = lawyerRegistrationSchema.safeParse(data);
-  
+
+  if (result.success) {
+    return { success: true, error: null };
+  }
+
+  // Transform Zod errors into user-friendly format with path
+  const errors = result.error.errors.map((err) => {
+    const path = err.path.length > 0 ? err.path.join('.') : 'root';
+    return `${path}: ${err.message}`;
+  });
+
   return {
-    success: result.success,
-    error: result.success ? null : result.error.errors.map(err => err.message)
+    success: false,
+    error: errors,
+  };
+}
+
+// New: Partial update schema
+const lawyerUpdateSchema = lawyerRegistrationSchema
+  .omit({ password: true, email: true }) // Never allow updating password or top-level email
+  .partial() // All remaining fields optional
+  .deepPartial(); // Makes nested objects (like contactInfo.address, jurisdictions, availability) also partial
+
+// Validation function for updates
+export function validateLawyerUpdateData(data: any) {
+  const result = lawyerUpdateSchema.safeParse(data);
+
+  if (result.success) {
+    return { success: true, error: null };
+  }
+
+  const errors = result.error.errors.map((err) => {
+    const path = err.path.length > 0 ? err.path.join('.') : 'root';
+    return `${path}: ${err.message}`;
+  });
+
+  return {
+    success: false,
+    error: errors,
   };
 }
 

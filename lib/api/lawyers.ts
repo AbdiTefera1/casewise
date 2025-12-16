@@ -33,6 +33,7 @@ export interface LawyerCreateData {
   };
 }
 
+
 export interface Lawyer {
   id: string;
   organizationId: string;
