@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await request.json();
+    console.log("Appointment before validation")
     const validationResult = validateAppointmentData(data);
     if (!validationResult.success) {
       return NextResponse.json(
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-
+console.log("After Validation")
     // Convert times to UTC
 const startTime = new Date(data.startTime).toISOString();
 const endTime = new Date(data.endTime).toISOString();
@@ -59,13 +60,13 @@ const existingAppointment = await prisma.appointment.findFirst({
   }
 });
 
-if (existingAppointment) {
-  return NextResponse.json(
-    { error: 'Time slot is not available' },
-    { status: 409 }
-  );
-}
-
+    if (existingAppointment) {
+      return NextResponse.json(
+        { error: 'Time slot is not available' },
+        { status: 409 }
+      );
+    }
+    
     const appointment = await prisma.appointment.create({
       data: {
         ...data,
