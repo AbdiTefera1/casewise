@@ -3,11 +3,9 @@ import api from './config';
 
 export interface ReportMetrics {
     totalCases: number;
-    activeCases: number;
-    completedCases: number;
-    totalRevenue: number;
-    outstandingAmount: number;
-    avgCaseResolutionTime: number;
+    totalClients: number;
+    totalLawyers: number;
+    totalDocuments: number;
   }
   
   export interface CaseStatusReport {
@@ -93,7 +91,7 @@ export interface ReportMetrics {
       startDate?: Date;
       endDate?: Date;
     }) => {
-      const { data } = await api.get<ReportMetrics>('/api/reports', { params });
+      const { data } = await api.get<ReportMetrics>('/reports', { params });
       return data;
     },
   
@@ -102,7 +100,7 @@ export interface ReportMetrics {
       endDate?: Date;
       status?: CaseStatus[];
     }) => {
-      const { data } = await api.get<CaseStatusReport[]>('/api/reports/case-status', { params });
+      const { data } = await api.get<CaseStatusReport[]>('/reports/case-status', { params });
       return data;
     },
   
@@ -111,7 +109,7 @@ export interface ReportMetrics {
       endDate: Date;
       groupBy?: 'day' | 'week' | 'month' | 'quarter' | 'year';
     }) => {
-      const { data } = await api.get<FinancialReport>('/api/reports/financial', { params });
+      const { data } = await api.get<FinancialReport>('/reports/financial', { params });
       return data;
     },
   
@@ -120,7 +118,7 @@ export interface ReportMetrics {
       startDate?: Date;
       endDate?: Date;
     }) => {
-      const { data } = await api.get<LawyerPerformanceReport[]>('/api/reports/lawyer-performance', { params });
+      const { data } = await api.get<LawyerPerformanceReport[]>('/reports/lawyer-performance', { params });
       return data;
     }
   };
